@@ -26,15 +26,18 @@ class FestivalRepositoryTest {
         festival1.setStartDate(LocalDate.of(2020, 1, 1));
         entityManager.persist(festival1);
         Festival festival2 = new Festival();
-        festival2.setStartDate(LocalDate.of(2026, 1, 2));
+        festival2.setStartDate(LocalDate.of(2027, 1, 2));
         entityManager.persist(festival2);
+        Festival festival3 = new Festival();
+        festival3.setStartDate(LocalDate.of(2026, 1, 2));
+        entityManager.persist(festival3);
 
         List<Festival> upcomingFestivals = repository.findUpcomingFestivals();
 
         assertThat(upcomingFestivals)
                 .isNotEmpty()
-                .hasSize(1)
-                .containsExactly(festival2);
+                .hasSize(2)
+                .containsExactly(festival3, festival2);
 
     }
 
