@@ -45,5 +45,20 @@ class UserServiceTest {
         verify(repository, never()).save(any(User.class));
     }
 
+    @Test
+    void givenExistingUser_whenLoginUser_thenReturnUser() {
+        when(repository.findOneByUsernameAndPassword(user.getUsername(), user.getPassword())).thenReturn(Optional.of(user));
+
+        User result = service.loginUser(user.getUsername(), user.getPassword());
+        assertNotNull(result);
+        assertEquals(user, result);
+    }
+
+    @Test
+    void givenWrongUserNameOrPassword_whenLoginUser_thenThrowException() {
+        when(repository.findOneByUsernameAndPassword(user.getUsername(), user.getPassword())).thenReturn(Optional.empty());
+        assertThrows(IllegalArgumentException.class, () -> service.loginUser(user.getUsername(), user.getPassword()));
+    }
+
 
 }

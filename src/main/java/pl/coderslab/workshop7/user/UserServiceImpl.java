@@ -19,4 +19,14 @@ public class UserServiceImpl implements UserService {
             return userRepository.save(user);
         }
     }
+
+    @Override
+    public User loginUser(String username, String password) {
+        Optional<User> userOptional = userRepository.findOneByUsernameAndPassword(username, password);
+        if (userOptional.isPresent()) {
+            return userOptional.get();
+        } else {
+            throw new IllegalArgumentException("Invalid username/email or password");
+        }
+    }
 }

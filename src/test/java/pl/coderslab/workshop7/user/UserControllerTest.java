@@ -10,7 +10,9 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
@@ -49,5 +51,30 @@ class UserControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1L))
                 .andExpect(jsonPath("$.username").value("username"));
+    }
+
+    @Test
+    void loginUser() throws Exception {
+        user.setId(1L);
+        when(userService.loginUser(anyString(), anyString())).thenReturn(user);
+
+        mockMvc.perform(post("/user/login")
+                        .param("username", "user")
+                        .param("password", "password"))
+
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.username").value(user.getUsername()));
+    }
+
+    @Test
+    public void testLoginUser_InvalidCredentials() throws Exception {
+        when(userService.loginUser(anyString(), anyString())).thenThrow(new IllegalArgumentException("Invalid username/email or password"));
+
+        mockMvc.perform(post("/user/login")
+                        .param("username", "user")
+                        .param("password", "wrongpassword"))
+                .andDo(print())
+                .andExpect(status().isUnauthorized());
     }
 }
