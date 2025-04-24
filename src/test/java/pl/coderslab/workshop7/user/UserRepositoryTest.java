@@ -30,4 +30,16 @@ class UserRepositoryTest {
         assertEquals(user, result.get());
     }
 
+    @Test
+    void findByUsernameAndPasswordTest() {
+        User user = new User();
+        user.setUsername("user");
+        user.setPassword("password");
+        entityManager.persist(user);
+
+        Optional<User> result = userRepository.findOneByUsernameAndPassword("user", "password");
+        assertTrue(result.isPresent());
+        assertEquals(user, result.get());
+    }
+
 }
