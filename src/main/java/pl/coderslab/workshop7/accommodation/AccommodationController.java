@@ -3,10 +3,7 @@ package pl.coderslab.workshop7.accommodation;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -19,5 +16,15 @@ public class AccommodationController {
     @GetMapping("/location/{location}")
     public ResponseEntity<List<Accommodation>> getAccommodationsByLocation(@PathVariable String location) {
         return new ResponseEntity<>(service.findByLocation(location), HttpStatus.OK);
+    }
+
+    @GetMapping("/price-range")
+    public ResponseEntity<List<Accommodation>> getAccommodationByPriceRange(@RequestParam double low, @RequestParam double high) {
+        return new ResponseEntity<>(service.findByPricePerDayBetween(low, high), HttpStatus.OK);
+    }
+
+    @GetMapping("/festival/{id}")
+    public ResponseEntity<List<Accommodation>> getAccommodationByFestivalId(@PathVariable Long id) {
+        return new ResponseEntity<>(service.findByFestivalId(id), HttpStatus.OK);
     }
 }
