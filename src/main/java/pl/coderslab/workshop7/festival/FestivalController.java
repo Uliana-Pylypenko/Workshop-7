@@ -34,14 +34,12 @@ public class FestivalController {
 
     @GetMapping("/start-date")
     public ResponseEntity<List<Festival>> getFestivalByStartDate(@RequestParam String startDate, @RequestParam String endDate) {
-        List<Festival> festivals = festivalService.findAllByStartDateBetween(LocalDate.parse(startDate), LocalDate.parse(endDate));
-        return ResponseEntity.ok(festivals);
-//        try {
-//            List<Festival> festivals = festivalService.findAllByStartDateBetween(LocalDate.parse(startDate), LocalDate.parse(endDate));
-//            return ResponseEntity.ok(festivals);
-//        } catch (IllegalArgumentException e) {
-//            return ResponseEntity.badRequest().build();
-//        }
+        try {
+            List<Festival> festivals = festivalService.findAllByStartDateBetween(LocalDate.parse(startDate), LocalDate.parse(endDate));
+            return ResponseEntity.ok(festivals);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping("/details/{id}")

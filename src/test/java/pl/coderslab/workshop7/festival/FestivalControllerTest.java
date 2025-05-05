@@ -91,7 +91,7 @@ class FestivalControllerTest {
     }
 
     @Test
-    void getFestivalByStartDate() throws Exception {
+    void getFestivalByStartDateTest() throws Exception {
         when(service.findAllByStartDateBetween(any(LocalDate.class), any(LocalDate.class))).thenReturn(List.of(festival));
 
         mockMvc.perform(get("/festival/start-date")
@@ -103,13 +103,18 @@ class FestivalControllerTest {
                 .andExpect(jsonPath("$[0].name").value(festival.getName()))
                 .andExpect(jsonPath("$[0].startDate").value(festival.getStartDate().toString()));
 
-//        mockMvc.perform(get("/festival/start-date")
-//                .param("startDate", "2025-04-01")
-//                .param("endDate", "2025-03-01"))
-//
-//                .andDo(print())
-//                .andExpect(status().isBadRequest());
+    }
 
+    @Test
+    void getFestivalByStartDateExceptionTest() throws Exception {
+        when(service.findAllByStartDateBetween(any(LocalDate.class), any(LocalDate.class))).thenThrow(new IllegalArgumentException());
+
+        mockMvc.perform(get("/festival/start-date")
+                .param("startDate", "2025-04-01")
+                .param("endDate", "2025-03-01"))
+
+                .andDo(print())
+                .andExpect(status().isBadRequest());
     }
 
     @Test
