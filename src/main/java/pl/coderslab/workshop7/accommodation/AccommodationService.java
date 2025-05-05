@@ -4,4 +4,8 @@ import java.util.List;
 
 public interface AccommodationService {
     List<Accommodation> findByLocation(String location);
+
+    List<Accommodation> findByPricePerDayBetween(Double lower, Double higher);
+
+    List<Accommodation> findByFestivalId(Long id);
 }

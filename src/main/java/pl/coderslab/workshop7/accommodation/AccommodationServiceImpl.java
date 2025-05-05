@@ -14,4 +14,14 @@ public class AccommodationServiceImpl implements AccommodationService {
     public List<Accommodation> findByLocation(String location) {
         return repository.findByLocationIgnoreCase(location);
     }
+
+    @Override
+    public List<Accommodation> findByPricePerDayBetween(Double lower, Double higher) {
+        return repository.findByPricePerDayBetween(lower, higher);
+    }
+
+    @Override
+    public List<Accommodation> findByFestivalId(Long id) {
+        return repository.findByFestivalId(id);
+    }
 }
