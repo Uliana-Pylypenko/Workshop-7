@@ -111,5 +111,18 @@ class FestivalControllerTest {
 
     }
 
+    @Test
+    void getFestivalByEndDate() throws Exception {
+        when(service.getDetailsById(any(Long.class))).thenReturn(festival);
+
+        mockMvc.perform(get("/festival/details/1"))
+
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(festival.getId()))
+                .andExpect(jsonPath("$.name").value(festival.getName()))
+                .andExpect(jsonPath("$.description").value(festival.getDescription()));
+    }
+
 
 }

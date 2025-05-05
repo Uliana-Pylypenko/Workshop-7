@@ -11,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -125,8 +126,14 @@ class FestivalServiceTest {
                 .containsExactly(festival3);
 
         assertThrows(IllegalArgumentException.class, () -> service.findAllByStartDateBetween(startDate2, endDate));
+    }
 
+    @Test
+    void givenFestival_whenGetDetailsById_thenReturnFestival() {
+        when(repository.findById(1L)).thenReturn(Optional.of(festival1));
 
-
+        assertThat(service.getDetailsById(1L))
+                .isNotNull()
+                .isEqualTo(festival1);
     }
 }

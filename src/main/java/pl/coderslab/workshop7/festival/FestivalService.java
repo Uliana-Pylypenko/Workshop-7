@@ -11,4 +11,6 @@ public interface FestivalService {
     List<Festival> findAllByLocationContainingIgnoreCase(String location);
 
     List<Festival> findAllByStartDateBetween(LocalDate startDate, LocalDate endDate);
+
+    Festival getDetailsById(Long id);
 }

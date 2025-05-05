@@ -2,6 +2,7 @@ package pl.coderslab.workshop7.festival;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,5 +42,10 @@ public class FestivalController {
 //        } catch (IllegalArgumentException e) {
 //            return ResponseEntity.badRequest().build();
 //        }
+    }
+
+    @GetMapping("/details/{id}")
+    public ResponseEntity<Festival> getFestivalById(@PathVariable Long id) {
+        return new ResponseEntity<>(festivalService.getDetailsById(id), HttpStatus.OK);
     }
 }

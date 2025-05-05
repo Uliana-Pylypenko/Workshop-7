@@ -38,6 +38,10 @@ public class FestivalServiceImpl implements FestivalService {
         } else {
             throw new IllegalArgumentException("Start date must be before end date");
         }
+    }
 
+    @Override
+    public Festival getDetailsById(Long id) {
+        return festivalRepository.findById(id).orElse(null);
     }
 }

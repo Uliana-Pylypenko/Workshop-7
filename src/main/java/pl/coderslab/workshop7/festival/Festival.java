@@ -1,11 +1,7 @@
 package pl.coderslab.workshop7.festival;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.hibernate.validator.constraints.UniqueElements;
+import lombok.*;
 
 import java.time.LocalDate;
 
