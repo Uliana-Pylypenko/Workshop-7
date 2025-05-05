@@ -24,4 +24,9 @@ public class AccommodationServiceImpl implements AccommodationService {
     public List<Accommodation> findByFestivalId(Long id) {
         return repository.findByFestivalId(id);
     }
+
+    @Override
+    public Accommodation findById(Long id) {
+        return repository.findById(id).orElse(null);
+    }
 }

@@ -8,4 +8,6 @@ public interface AccommodationService {
     List<Accommodation> findByPricePerDayBetween(Double lower, Double higher);
 
     List<Accommodation> findByFestivalId(Long id);
+
+    Accommodation findById(Long id);
 }

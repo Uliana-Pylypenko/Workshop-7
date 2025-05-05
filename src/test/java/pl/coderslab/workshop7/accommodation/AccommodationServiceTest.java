@@ -10,6 +10,7 @@ import pl.coderslab.workshop7.festival.Festival;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -33,6 +34,7 @@ class AccommodationServiceTest {
         accommodationList = new ArrayList<>();
 
         accommodation1 = new Accommodation();
+        accommodation1.setId(1L);
         accommodation1.setLocation("Warszawa");
         accommodation1.setPricePerDay(7.0);
         Festival festival1 = new Festival();
@@ -40,6 +42,7 @@ class AccommodationServiceTest {
         accommodation1.setFestival(festival1);
 
         accommodation2 = new Accommodation();
+        accommodation2.setId(2L);
         accommodation2.setLocation("Krakow");
         accommodation2.setPricePerDay(15.0);
 
@@ -114,5 +117,17 @@ class AccommodationServiceTest {
                 .isEmpty();
     }
 
+    @Test
+    void whenFindById_thenReturnAccommodation() {
+        when(repository.findById(1L)).thenReturn(Optional.of(accommodation1));
 
+        assertThat(service.findById(1L))
+                .isNotNull()
+                .isEqualTo(accommodation1);
+
+        when(repository.findById(3L)).thenReturn(Optional.empty());
+
+        assertThat(service.findById(3L))
+            .isNull();
+    }
 }

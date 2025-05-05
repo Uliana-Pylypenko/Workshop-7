@@ -29,7 +29,6 @@ public class Accommodation {
     private double pricePerDay;
     private String location;
     private String imageUrl;
-    
 
     @ElementCollection(targetClass = Amenity.class)
     @CollectionTable(name = "accommodation_amenities", joinColumns = @JoinColumn(name = "accommodation_id"))
