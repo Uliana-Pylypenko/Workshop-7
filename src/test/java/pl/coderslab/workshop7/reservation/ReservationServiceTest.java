@@ -1,5 +1,6 @@
 package pl.coderslab.workshop7.reservation;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -13,6 +14,7 @@ import pl.coderslab.workshop7.user.UserRepository;
 import java.time.LocalDate;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -32,19 +34,6 @@ class ReservationServiceTest {
     @Mock
     private UserRepository userRepository;
 
-//    private Reservation reservation;
-
-//    @BeforeEach
-//    void setUp() {
-//        reservation = new Reservation();
-//        User user = new User(1L, "test", "test", "test");
-//        reservation.setUser(user);
-//        Accommodation accommodation = new Accommodation();
-//        accommodation.setId(1L);
-//        accommodation.setName("test");
-//        reservation.setAccommodation(accommodation);
-//
-//    }
 
     @Test
     void shouldSaveReservation() {
@@ -77,6 +66,62 @@ class ReservationServiceTest {
         assertThat(savedReservation.getAccommodation().getId()).isEqualTo(accommodation.getId());
         assertThat(savedReservation.getReservationStart()).isEqualTo(reservationStart);
         assertThat(savedReservation.getReservationEnd()).isEqualTo(reservationEnd);
-
     }
+
+    @Test
+    void shouldThrowExceptionWhenUserNotFound() {
+        Long userId = 1L;
+        Long accommodationId = 1L;
+        LocalDate reservationStart = LocalDate.of(2020, 1, 1);
+        LocalDate reservationEnd = LocalDate.of(2020, 2, 1);
+
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
+        EntityNotFoundException entityNotFoundException =
+                assertThrows(EntityNotFoundException.class, () ->
+                {service.create(userId, accommodationId, reservationStart, reservationEnd);});
+        assertThat(entityNotFoundException.getMessage()).isEqualTo("User not found");
+    }
+
+    @Test
+    void shouldThrowExceptionWhenAccommodationNotFound() {
+        Long userId = 1L;
+        User user = new User();
+        user.setId(userId);
+
+        Long accommodationId = 1L;
+        LocalDate reservationStart = LocalDate.of(2020, 1, 1);
+        LocalDate reservationEnd = LocalDate.of(2020, 2, 1);
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(accommodationRepository.findById(accommodationId)).thenReturn(Optional.empty());
+
+        EntityNotFoundException entityNotFoundException =
+                assertThrows(EntityNotFoundException.class, () ->
+                {service.create(userId, accommodationId, reservationStart, reservationEnd);});
+        assertThat(entityNotFoundException.getMessage()).isEqualTo("Accommodation not found");
+    }
+
+    @Test
+    void shouldThrowExceptionWhenStartDateAfterEndDate() {
+        Long userId = 1L;
+        User user = new User();
+        user.setId(userId);
+
+        Long accommodationId = 1L;
+        Accommodation accommodation = new Accommodation();
+        accommodation.setId(accommodationId);
+
+        LocalDate reservationStart = LocalDate.of(2020, 2, 1);
+        LocalDate reservationEnd = LocalDate.of(2020, 1, 1);
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(accommodationRepository.findById(accommodationId)).thenReturn(Optional.of(accommodation));
+
+        IllegalArgumentException illegalArgumentException =
+                assertThrows(IllegalArgumentException.class, () ->
+                {service.create(userId, accommodationId, reservationStart, reservationEnd);});
+        assertThat(illegalArgumentException.getMessage()).isEqualTo("Reservation start date is after reservation end date");
+    }
+
 }

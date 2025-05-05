@@ -40,7 +40,7 @@ public class ReservationServiceImpl implements ReservationService {
             reservation.setReservationStart(reservationStart);
             reservation.setReservationEnd(reservationEnd);
         } else {
-            throw new EntityNotFoundException("Reservation start date is after reservation end date");
+            throw new IllegalArgumentException("Reservation start date is after reservation end date");
         }
 
         return reservationRepository.save(reservation);
