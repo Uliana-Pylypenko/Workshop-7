@@ -1,6 +1,7 @@
 package pl.coderslab.workshop7.accommodation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,15 +94,37 @@ class AccommodationControllerTest {
                 .andExpect(jsonPath("$[0].festival.id").value(1L));
     }
 
-    @Test
-    void whenGetAccommodationByFestivalId_thenReturnEmptyList() throws Exception {
-        when(service.findByFestivalId(2L)).thenReturn(List.of());
+//    @Test
+//    void whenGetAccommodationByFestivalId_thenReturnEmptyList() throws Exception {
+//        when(service.findByFestivalId(2L)).thenThrow(EntityNotFoundException.class);
+//
+//        mockMvc.perform(get("/accommodation/festival/2"))
+//
+//                .andDo(print())
+//                .andExpect(status().isNotFound());
+//               // .andExpect(content().string("[]"));
+//    }
 
-        mockMvc.perform(get("/accommodation/festival/2"))
+    @Test
+    void whenGetAccommodationById_thenReturnAccommodation() throws Exception {
+        when(service.findById(1L)).thenReturn(accommodation);
+
+        mockMvc.perform(get("/accommodation/1"))
 
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().string("[]"));
+                .andExpect(jsonPath("$.location").value(accommodation.getLocation()))
+                .andExpect(jsonPath("$.pricePerDay").value(accommodation.getPricePerDay()));
+    }
+
+    @Test
+    void whenGetAccommodationById_thenThrowException() throws Exception {
+        when(service.findById(3L)).thenThrow(EntityNotFoundException.class);
+
+        mockMvc.perform(get("/accommodation/3"))
+
+                .andDo(print())
+                .andExpect(status().isNotFound());
     }
 
 

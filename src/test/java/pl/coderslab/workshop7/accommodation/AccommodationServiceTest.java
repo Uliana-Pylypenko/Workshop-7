@@ -1,5 +1,6 @@
 package pl.coderslab.workshop7.accommodation;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -124,10 +125,12 @@ class AccommodationServiceTest {
         assertThat(service.findById(1L))
                 .isNotNull()
                 .isEqualTo(accommodation1);
+    }
 
+    @Test
+    void whenFindById_thenThrowException() {
         when(repository.findById(3L)).thenReturn(Optional.empty());
 
-        assertThat(service.findById(3L))
-            .isNull();
+        assertThrows(EntityNotFoundException.class, () -> service.findById(3L));
     }
 }
