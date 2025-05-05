@@ -42,7 +42,11 @@ public class FestivalServiceImpl implements FestivalService {
 
     @Override
     public List<Festival> findAllByPricePerDayBetween(double lower, double higher) {
-        return festivalRepository.findAllByPricePerDayBetween(lower, higher);
+        if (lower <= higher) {
+            return festivalRepository.findAllByPricePerDayBetween(lower, higher);
+        } else {
+            throw new IllegalArgumentException("Lower date must be before higher date");
+        }
     }
 
     @Override

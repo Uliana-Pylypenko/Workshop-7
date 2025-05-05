@@ -156,4 +156,14 @@ class FestivalServiceTest {
         assertThat(service.findAllByPricePerDayBetween(priceLower2, priceHigher2))
                 .isEmpty();
     }
+
+    @Test
+    void givenPriceLowerIsHigher_whenFindAllByPricePerDayBetween_thenThrowException() {
+        double priceLower = 5.0;
+        double priceHigher = 10.0;
+
+        when(repository.findAllByPricePerDayBetween(priceLower, priceHigher)).thenThrow(new IllegalArgumentException());
+
+        assertThrows(IllegalArgumentException.class, () -> service.findAllByPricePerDayBetween(priceLower, priceHigher));
+    }
 }
