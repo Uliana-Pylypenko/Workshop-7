@@ -55,8 +55,6 @@ class FestivalServiceTest {
         festivalList.add(festival1);
         festivalList.add(festival2);
         festivalList.add(festival3);
-
-
     }
 
 
