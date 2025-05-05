@@ -58,6 +58,6 @@ class AccommodationServiceTest {
         assertThat(service.findByLocation("Gdansk"))
                 .isEmpty();
     }
-    
+
 
 }
