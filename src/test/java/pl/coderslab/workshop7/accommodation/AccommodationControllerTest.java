@@ -38,9 +38,9 @@ class AccommodationControllerTest {
 
     @Test
     void getAccommodationsByLocationTest() throws Exception {
-        when(service.findByLocation("Warszawa")).thenReturn(List.of(accommodation));
+        when(service.findByLocation("warszawa")).thenReturn(List.of(accommodation));
 
-        mockMvc.perform(get("/accommodation/location/Warszawa"))
+        mockMvc.perform(get("/accommodation/location/warszawa"))
 
                 .andDo(print())
                 .andExpect(status().isOk())

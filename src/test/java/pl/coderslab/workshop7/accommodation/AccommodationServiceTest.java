@@ -43,9 +43,9 @@ class AccommodationServiceTest {
 
     @Test
     void givenAccommodationList_whenFindByLocation_thenReturnAccommodationList() {
-        when(repository.findByLocation("Warszawa")).thenReturn(List.of(accommodation1));
+        when(repository.findByLocationIgnoreCase("warszawa")).thenReturn(List.of(accommodation1));
 
-        assertThat(service.findByLocation("Warszawa"))
+        assertThat(service.findByLocation("warszawa"))
                 .isNotEmpty()
                 .hasSize(1)
                 .containsExactly(accommodation1);
@@ -53,7 +53,7 @@ class AccommodationServiceTest {
 
     @Test
     void givenAccommodationList_whenFindByNonExistentLocation_thenReturnEmptyList() {
-        when(repository.findByLocation("Gdansk")).thenReturn(List.of());
+        when(repository.findByLocationIgnoreCase("Gdansk")).thenReturn(List.of());
 
         assertThat(service.findByLocation("Gdansk"))
                 .isEmpty();

@@ -35,7 +35,7 @@ class AccommodationRepositoryTest {
 
     @Test
     void findByLocationTest() {
-        List<Accommodation> accommodationsInWarsaw = repository.findByLocation("Warszawa");
+        List<Accommodation> accommodationsInWarsaw = repository.findByLocationIgnoreCase("warszawa");
 
         assertThat(accommodationsInWarsaw)
                 .isNotEmpty()

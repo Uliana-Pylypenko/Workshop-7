@@ -12,6 +12,6 @@ public class AccommodationServiceImpl implements AccommodationService {
 
     @Override
     public List<Accommodation> findByLocation(String location) {
-        return repository.findByLocation(location);
+        return repository.findByLocationIgnoreCase(location);
     }
 }
