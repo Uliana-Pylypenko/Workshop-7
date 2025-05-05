@@ -48,4 +48,14 @@ public class FestivalController {
     public ResponseEntity<Festival> getFestivalById(@PathVariable Long id) {
         return new ResponseEntity<>(festivalService.getFestivalById(id), HttpStatus.OK);
     }
+
+    @GetMapping("/price-range")
+    public ResponseEntity<List<Festival>> getFestivalByPriceRange(@RequestParam Double lower, @RequestParam Double higher) {
+        try {
+            List<Festival> festivals = festivalService.findAllByPricePerDayBetween(lower, higher);
+            return ResponseEntity.ok(festivals);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
 }

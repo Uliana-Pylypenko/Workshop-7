@@ -40,6 +40,7 @@ class FestivalControllerTest {
         festival.setFestivalCategory(FestivalCategory.MUSIC);
         festival.setLocation("Warszawa");
         festival.setStartDate(LocalDate.of(2025, 4, 15));
+        festival.setPricePerDay(7.0);
     }
 
     @Test
@@ -124,5 +125,32 @@ class FestivalControllerTest {
                 .andExpect(jsonPath("$.description").value(festival.getDescription()));
     }
 
+    @Test
+    void getFestivalByPriceRangeTest() throws Exception {
+        when(service.findAllByPricePerDayBetween(any(Double.class), any(Double.class))).thenReturn(List.of(festival));
+        double lower = 5.0;
+        double higher = 10.0;
+
+        mockMvc.perform(get("/festival/price-range")
+                .param("lower", String.valueOf(lower))
+                .param("higher", String.valueOf(higher)))
+
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void getFestivalByPriceRangeExceptionTest() throws Exception {
+        when(service.findAllByPricePerDayBetween(any(Double.class), any(Double.class))).thenThrow(new IllegalArgumentException());
+        double lower = 10.0;
+        double higher = 5.0;
+
+        mockMvc.perform(get("/festival/price-range")
+                .param("lower", String.valueOf(lower))
+                .param("higher", String.valueOf(higher)))
+
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
 
 }
