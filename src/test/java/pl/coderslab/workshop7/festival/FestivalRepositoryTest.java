@@ -33,18 +33,21 @@ class FestivalRepositoryTest {
         festival1.setStartDate(LocalDate.of(2020, 1, 1));
         festival1.setName("Festival1");
         festival1.setLocation("Warszawa");
+        festival1.setPricePerDay(6.0);
         entityManager.persist(festival1);
 
         festival2 = new Festival();
         festival2.setStartDate(LocalDate.of(2027, 1, 2));
         festival2.setName("Festival2");
         festival2.setLocation("Warka");
+        festival2.setPricePerDay(7.0);
         entityManager.persist(festival2);
 
         festival3 = new Festival();
         festival3.setStartDate(LocalDate.of(2026, 1, 2));
         festival3.setName("Festival3");
         festival3.setLocation("Krakow");
+        festival3.setPricePerDay(8.0);
         entityManager.persist(festival3);
     }
 
@@ -98,5 +101,27 @@ class FestivalRepositoryTest {
                 .containsExactly(festival3);
     }
 
+
+    @Test
+    void findAllByPricePerDayBetween() {
+        List<Festival> pricesBetween5and10 = repository.findAllByPricePerDayBetween(5.0, 10.0);
+
+        assertThat(pricesBetween5and10)
+                .isNotEmpty()
+                .hasSize(3)
+                .containsExactlyInAnyOrder(festival1, festival2, festival3);
+
+        List<Festival> pricesBetween8and10 = repository.findAllByPricePerDayBetween(8.0, 10.0);
+
+        assertThat(pricesBetween8and10)
+                .isNotEmpty()
+                .hasSize(1)
+                .containsExactlyInAnyOrder(festival3);
+
+        List<Festival> pricesBetween10and20 = repository.findAllByPricePerDayBetween(10.0, 20.0);
+
+        assertThat(pricesBetween10and20)
+                .isEmpty();
+    }
 
 }

@@ -113,7 +113,7 @@ class FestivalControllerTest {
 
     @Test
     void getFestivalByEndDate() throws Exception {
-        when(service.getDetailsById(any(Long.class))).thenReturn(festival);
+        when(service.getFestivalById(any(Long.class))).thenReturn(festival);
 
         mockMvc.perform(get("/festival/details/1"))
 

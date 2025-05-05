@@ -46,6 +46,6 @@ public class FestivalController {
 
     @GetMapping("/details/{id}")
     public ResponseEntity<Festival> getFestivalById(@PathVariable Long id) {
-        return new ResponseEntity<>(festivalService.getDetailsById(id), HttpStatus.OK);
+        return new ResponseEntity<>(festivalService.getFestivalById(id), HttpStatus.OK);
     }
 }

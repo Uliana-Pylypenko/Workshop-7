@@ -12,5 +12,7 @@ public interface FestivalService {
 
     List<Festival> findAllByStartDateBetween(LocalDate startDate, LocalDate endDate);
 
-    Festival getDetailsById(Long id);
+    List<Festival> findAllByPricePerDayBetween(double lower, double higher);
+
+    Festival getFestivalById(Long id);
 }

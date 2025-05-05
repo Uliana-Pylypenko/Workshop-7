@@ -22,4 +22,5 @@ public class Festival {
     private LocalDate endDate;
     private String location;
     private FestivalCategory festivalCategory;
+    private double pricePerDay;
 }

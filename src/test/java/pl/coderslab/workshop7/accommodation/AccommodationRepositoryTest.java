@@ -78,7 +78,6 @@ class AccommodationRepositoryTest {
 
         assertThat(repository.findByFestivalId(2L))
                 .isEmpty();
-
     }
 
 

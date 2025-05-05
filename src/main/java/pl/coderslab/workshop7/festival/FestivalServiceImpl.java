@@ -41,7 +41,12 @@ public class FestivalServiceImpl implements FestivalService {
     }
 
     @Override
-    public Festival getDetailsById(Long id) {
+    public List<Festival> findAllByPricePerDayBetween(double lower, double higher) {
+        return festivalRepository.findAllByPricePerDayBetween(lower, higher);
+    }
+
+    @Override
+    public Festival getFestivalById(Long id) {
         return festivalRepository.findById(id).orElse(null);
     }
 }

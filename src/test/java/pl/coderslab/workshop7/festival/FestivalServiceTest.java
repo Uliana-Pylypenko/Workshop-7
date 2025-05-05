@@ -39,18 +39,21 @@ class FestivalServiceTest {
         festival1.setStartDate(LocalDate.of(2026, 1, 1));
         festival1.setFestivalCategory(FestivalCategory.FILM);
         festival1.setLocation("Warszawa");
+        festival1.setPricePerDay(6.0);
 
         festival2 = new Festival();
         festival2.setName("Festival2");
         festival2.setStartDate(LocalDate.of(2025, 7, 2));
         festival2.setFestivalCategory(FestivalCategory.SCIENCE);
         festival2.setLocation("Warka");
+        festival2.setPricePerDay(7.0);
 
         festival3 = new Festival();
         festival3.setName("Festival3");
         festival3.setStartDate(LocalDate.of(2025, 7, 3));
         festival3.setFestivalCategory(FestivalCategory.MUSIC);
         festival3.setLocation("Krakow");
+        festival3.setPricePerDay(8.0);
 
         festivalList.add(festival1);
         festivalList.add(festival2);
@@ -130,8 +133,27 @@ class FestivalServiceTest {
     void givenFestival_whenGetDetailsById_thenReturnFestival() {
         when(repository.findById(1L)).thenReturn(Optional.of(festival1));
 
-        assertThat(service.getDetailsById(1L))
+        assertThat(service.getFestivalById(1L))
                 .isNotNull()
                 .isEqualTo(festival1);
+    }
+
+    @Test
+    void givenFestivalList_whenFindAllByPricePerDayBetween_thenReturnFestivals() {
+        double priceLower1 = 5.0;
+        double priceHigher1 = 10.0;
+        when(repository.findAllByPricePerDayBetween(priceLower1, priceHigher1)).thenReturn(festivalList);
+
+        assertThat(service.findAllByPricePerDayBetween(priceLower1, priceHigher1))
+                .isNotEmpty()
+                .hasSize(3)
+                .containsExactlyInAnyOrder(festival1, festival2, festival3);
+
+        double priceLower2 = 10.0;
+        double priceHigher2 = 20.0;
+        when(repository.findAllByPricePerDayBetween(priceLower2, priceHigher2)).thenReturn(List.of());
+
+        assertThat(service.findAllByPricePerDayBetween(priceLower2, priceHigher2))
+                .isEmpty();
     }
 }
