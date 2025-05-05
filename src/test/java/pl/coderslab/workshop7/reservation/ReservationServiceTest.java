@@ -55,6 +55,7 @@ class ReservationServiceTest {
         reservation.setReservationStart(reservationStart);
         reservation.setReservationEnd(reservationEnd);
 
+
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(accommodationRepository.findById(accommodationId)).thenReturn(Optional.of(accommodation));
         when(reservationRepository.save(any(Reservation.class))).thenReturn(reservation);
@@ -66,6 +67,7 @@ class ReservationServiceTest {
         assertThat(savedReservation.getAccommodation().getId()).isEqualTo(accommodation.getId());
         assertThat(savedReservation.getReservationStart()).isEqualTo(reservationStart);
         assertThat(savedReservation.getReservationEnd()).isEqualTo(reservationEnd);
+        //assertThat(savedReservation.getReservationStatus()).isEqualTo(ReservationStatus.IN_PROGRESS);
     }
 
     @Test

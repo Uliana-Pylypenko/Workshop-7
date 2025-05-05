@@ -22,6 +22,8 @@ public class ReservationServiceImpl implements ReservationService {
     public Reservation create(Long userId, Long accommodationId, LocalDate reservationStart, LocalDate reservationEnd) {
         Reservation reservation = new Reservation();
 
+        //reservation.setReservationStatus(ReservationStatus.IN_PROGRESS);
+
         Optional<User> user = userRepository.findById(userId);
         if (user.isPresent()) {
             reservation.setUser(user.get());
