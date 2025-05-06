@@ -3,7 +3,6 @@ package pl.coderslab.workshop7.reservation;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -26,6 +25,12 @@ public class ReservationServiceImpl implements ReservationService {
     private AccommodationRepository accommodationRepository;
 
     private static Logger logger = LoggerFactory.getLogger(ReservationServiceImpl.class);
+
+    private void checkUserExists(Long userId) {
+        if (userRepository.findById(userId).isEmpty()) {
+            throw new EntityNotFoundException("User not found");
+        }
+    }
 
     @Override
     public Reservation create(Long userId, Long accommodationId, LocalDate reservationStart, LocalDate reservationEnd) {
@@ -64,13 +69,20 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public List<Reservation> findAllByUserId(Long userId) {
-        Optional<User> user = userRepository.findById(userId);
-        if (user.isPresent()) {
-            return reservationRepository.findAllByUserId(userId);
-        } else {
-            throw new EntityNotFoundException("User not found");
-        }
+        checkUserExists(userId);
+        return reservationRepository.findAllByUserId(userId);
+    }
 
+    @Override
+    public List<Reservation> findPastReservationsByUserId(Long userId) {
+        checkUserExists(userId);
+        return reservationRepository.findPastReservationsByUserId(userId);
+    }
+
+    @Override
+    public List<Reservation> findCurrentReservationsByUserId(Long userId) {
+        checkUserExists(userId);
+        return reservationRepository.findCurrentReservationsByUserId(userId);
     }
 
 }

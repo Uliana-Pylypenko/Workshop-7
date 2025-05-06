@@ -8,5 +8,7 @@ public interface ReservationService {
 
     List<Reservation> findAllByUserId(Long userId);
 
-    //List<Reservation> findPastReservationsByUserId(Long userId);
+    List<Reservation> findPastReservationsByUserId(Long userId);
+
+    List<Reservation> findCurrentReservationsByUserId(Long userId);
 }
