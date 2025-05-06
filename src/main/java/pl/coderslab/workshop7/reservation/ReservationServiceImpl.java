@@ -10,6 +10,7 @@ import pl.coderslab.workshop7.user.User;
 import pl.coderslab.workshop7.user.UserRepository;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -20,7 +21,6 @@ public class ReservationServiceImpl implements ReservationService {
     private AccommodationRepository accommodationRepository;
 
     @Override
-    @Transactional
     public Reservation create(Long userId, Long accommodationId, LocalDate reservationStart, LocalDate reservationEnd) {
         Reservation reservation = new Reservation();
 
@@ -54,6 +54,8 @@ public class ReservationServiceImpl implements ReservationService {
         System.out.println("Saved reservation: " + savedReservation);
 
         return savedReservation;
-
     }
+
+
+
 }
