@@ -63,7 +63,7 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public List<Reservation> findByUserId(Long userId) {
+    public List<Reservation> findAllByUserId(Long userId) {
         Optional<User> user = userRepository.findById(userId);
         if (user.isPresent()) {
             return reservationRepository.findAllByUserId(userId);

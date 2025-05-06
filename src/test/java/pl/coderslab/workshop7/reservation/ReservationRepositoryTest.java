@@ -1,5 +1,6 @@
 package pl.coderslab.workshop7.reservation;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -21,30 +22,69 @@ class ReservationRepositoryTest {
     @Autowired
     private ReservationRepository repository;
 
-    @Test
-    void findAllByUserIdTest() {
-        User user = new User("test", "test", "test");
+    private User user;
+    private Accommodation accommodation;
+    private Reservation reservation1;
+    private Reservation reservation2;
+
+    @BeforeEach
+    void setUp() {
+        user = new User("test", "test", "test");
         entityManager.persist(user);
 
-        Accommodation accommodation = new Accommodation();
+        accommodation = new Accommodation();
         accommodation.setName("test");
         entityManager.persist(accommodation);
 
-        Reservation reservation = new Reservation();
-        reservation.setUser(user);
-        reservation.setAccommodation(accommodation);
-        reservation.setReservationStart(LocalDate.of(2020, 1, 1));
-        reservation.setReservationEnd(LocalDate.of(2020, 2, 1));
-        entityManager.persist(reservation);
+        reservation1 = new Reservation();
+        reservation1.setUser(user);
+        reservation1.setAccommodation(accommodation);
+        reservation1.setReservationStart(LocalDate.of(2020, 1, 1));
+        reservation1.setReservationEnd(LocalDate.of(2020, 2, 1));
+        entityManager.persist(reservation1);
 
+        reservation2 = new Reservation();
+        reservation2.setUser(user);
+        reservation2.setAccommodation(accommodation);
+        reservation2.setReservationStart(LocalDate.of(2025, 5, 1));
+        reservation2.setReservationEnd(LocalDate.of(2025, 5, 10));
+        entityManager.persist(reservation2);
+    }
+
+    @Test
+    void findAllByUserIdTest() {
         List<Reservation> foundReservation = repository.findAllByUserId(user.getId());
+
         assertThat(foundReservation)
                 .isNotEmpty()
-                .hasSize(1)
-                .containsExactly(reservation);
+                .hasSize(2)
+                .containsExactlyInAnyOrder(reservation1, reservation2);
 
-        List<Reservation> foundReservation2 = repository.findAllByUserId(2L);
+        List<Reservation> foundReservation2 = repository.findAllByUserId(3L);
         assertThat(foundReservation2)
                 .isEmpty();
     }
+
+    @Test
+    void findPastReservationsByUserIdTest() {
+        List<Reservation> foundReservation = repository.findPastReservationsByUserId(user.getId());
+
+        assertThat(foundReservation)
+                .isNotEmpty()
+                .hasSize(1)
+                .containsExactly(reservation1)
+                .doesNotContain(reservation2);
+    }
+
+    @Test
+    void findCurrentReservationsByUserIdTest() {
+        List<Reservation> foundReservation = repository.findCurrentReservationsByUserId(user.getId());
+
+        assertThat(foundReservation)
+                .isNotEmpty()
+                .hasSize(1)
+                .containsExactly(reservation2)
+                .doesNotContain(reservation1);
+    }
+
 }

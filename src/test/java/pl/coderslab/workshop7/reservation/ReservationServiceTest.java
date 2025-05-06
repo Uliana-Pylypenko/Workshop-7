@@ -124,7 +124,7 @@ class ReservationServiceTest {
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(reservationRepository.findAllByUserId(userId)).thenReturn(List.of(reservation));
 
-        List<Reservation> foundReservations = service.findByUserId(userId);
+        List<Reservation> foundReservations = service.findAllByUserId(userId);
 
         assertThat(foundReservations)
                 .isNotEmpty()
@@ -141,7 +141,6 @@ class ReservationServiceTest {
                 {service.create(userId, accommodationId, reservationStart, reservationEnd);});
 
         assertThat(entityNotFoundException.getMessage()).isEqualTo("User not found");
-
     }
 
 }
