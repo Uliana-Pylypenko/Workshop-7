@@ -1,6 +1,7 @@
 package pl.coderslab.workshop7.reservation;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -12,6 +13,7 @@ import pl.coderslab.workshop7.user.User;
 import pl.coderslab.workshop7.user.UserRepository;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -34,28 +36,38 @@ class ReservationServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    private User user;
+    private Long userId;
+    private Accommodation accommodation;
+    private Long accommodationId;
+    private Reservation reservation;
+    private LocalDate reservationStart;
+    private LocalDate reservationEnd;
 
-    @Test
-    void shouldSaveReservation() {
-        Long userId = 1L;
-        User user = new User();
+    @BeforeEach
+    void setUp() {
+        userId = 1L;
+        user = new User();
         user.setId(userId);
 
-        Long accommodationId = 1L;
-        Accommodation accommodation = new Accommodation();
+        accommodationId = 1L;
+        accommodation = new Accommodation();
         accommodation.setId(accommodationId);
 
-        LocalDate reservationStart = LocalDate.of(2020, 1, 1);
-        LocalDate reservationEnd = LocalDate.of(2020, 2, 1);
+        reservationStart = LocalDate.of(2020, 1, 1);
+        reservationEnd = LocalDate.of(2020, 2, 1);
 
-        Reservation reservation = new Reservation();
+        reservation = new Reservation();
         reservation.setId(1L);
         reservation.setUser(user);
         reservation.setAccommodation(accommodation);
         reservation.setReservationStart(reservationStart);
         reservation.setReservationEnd(reservationEnd);
         reservation.setReservationStatus(ReservationStatus.IN_PROGRESS);
+    }
 
+    @Test
+    void shouldSaveReservation() {
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(accommodationRepository.findById(accommodationId)).thenReturn(Optional.of(accommodation));
@@ -68,16 +80,11 @@ class ReservationServiceTest {
         assertThat(savedReservation.getAccommodation().getId()).isEqualTo(accommodation.getId());
         assertThat(savedReservation.getReservationStart()).isEqualTo(reservationStart);
         assertThat(savedReservation.getReservationEnd()).isEqualTo(reservationEnd);
-        //assertThat(savedReservation.getReservationStatus()).isEqualTo(ReservationStatus.IN_PROGRESS);
+        assertThat(savedReservation.getReservationStatus()).isEqualTo(ReservationStatus.IN_PROGRESS);
     }
 
     @Test
     void shouldThrowExceptionWhenUserNotFound() {
-        Long userId = 1L;
-        Long accommodationId = 1L;
-        LocalDate reservationStart = LocalDate.of(2020, 1, 1);
-        LocalDate reservationEnd = LocalDate.of(2020, 2, 1);
-
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
         EntityNotFoundException entityNotFoundException =
@@ -88,13 +95,6 @@ class ReservationServiceTest {
 
     @Test
     void shouldThrowExceptionWhenAccommodationNotFound() {
-        Long userId = 1L;
-        User user = new User();
-        user.setId(userId);
-
-        Long accommodationId = 1L;
-        LocalDate reservationStart = LocalDate.of(2020, 1, 1);
-        LocalDate reservationEnd = LocalDate.of(2020, 2, 1);
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(accommodationRepository.findById(accommodationId)).thenReturn(Optional.empty());
@@ -107,16 +107,8 @@ class ReservationServiceTest {
 
     @Test
     void shouldThrowExceptionWhenStartDateAfterEndDate() {
-        Long userId = 1L;
-        User user = new User();
-        user.setId(userId);
-
-        Long accommodationId = 1L;
-        Accommodation accommodation = new Accommodation();
-        accommodation.setId(accommodationId);
-
-        LocalDate reservationStart = LocalDate.of(2020, 2, 1);
-        LocalDate reservationEnd = LocalDate.of(2020, 1, 1);
+        reservationStart = LocalDate.of(2020, 2, 1);
+        reservationEnd = LocalDate.of(2020, 1, 1);
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(accommodationRepository.findById(accommodationId)).thenReturn(Optional.of(accommodation));
@@ -125,6 +117,31 @@ class ReservationServiceTest {
                 assertThrows(IllegalArgumentException.class, () ->
                 {service.create(userId, accommodationId, reservationStart, reservationEnd);});
         assertThat(illegalArgumentException.getMessage()).isEqualTo("Reservation start date is after reservation end date");
+    }
+
+    @Test
+    void findByUserIdTest() {
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(reservationRepository.findAllByUserId(userId)).thenReturn(List.of(reservation));
+
+        List<Reservation> foundReservations = service.findByUserId(userId);
+
+        assertThat(foundReservations)
+                .isNotEmpty()
+                .hasSize(1)
+                .containsExactly(reservation);
+    }
+
+    @Test
+    void findByUserIdShouldThrowExceptionWhenUserNotFound() {
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
+        EntityNotFoundException entityNotFoundException =
+                assertThrows(EntityNotFoundException.class, () ->
+                {service.create(userId, accommodationId, reservationStart, reservationEnd);});
+
+        assertThat(entityNotFoundException.getMessage()).isEqualTo("User not found");
+
     }
 
 }

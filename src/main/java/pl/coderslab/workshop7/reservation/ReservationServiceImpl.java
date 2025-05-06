@@ -2,8 +2,11 @@ package pl.coderslab.workshop7.reservation;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import pl.coderslab.workshop7.accommodation.Accommodation;
 import pl.coderslab.workshop7.accommodation.AccommodationRepository;
 import pl.coderslab.workshop7.user.User;
@@ -13,12 +16,16 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+
 @Service
 @AllArgsConstructor
+@Log4j2
 public class ReservationServiceImpl implements ReservationService {
     private ReservationRepository reservationRepository;
     private UserRepository userRepository;
     private AccommodationRepository accommodationRepository;
+
+    private static Logger logger = LoggerFactory.getLogger(ReservationServiceImpl.class);
 
     @Override
     public Reservation create(Long userId, Long accommodationId, LocalDate reservationStart, LocalDate reservationEnd) {
@@ -47,15 +54,23 @@ public class ReservationServiceImpl implements ReservationService {
 
         reservation.setReservationStatus(ReservationStatus.IN_PROGRESS);
 
-        System.out.println(reservation.getReservationStatus());
-
         Reservation savedReservation = reservationRepository.save(reservation);
 
-        System.out.println("Saved reservation: " + savedReservation);
+
+        logger.info("Saved reservation: {}", savedReservation);
 
         return savedReservation;
     }
 
+    @Override
+    public List<Reservation> findByUserId(Long userId) {
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isPresent()) {
+            return reservationRepository.findAllByUserId(userId);
+        } else {
+            throw new EntityNotFoundException("User not found");
+        }
 
+    }
 
 }
