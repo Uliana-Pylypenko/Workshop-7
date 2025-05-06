@@ -54,6 +54,7 @@ class ReservationServiceTest {
         reservation.setAccommodation(accommodation);
         reservation.setReservationStart(reservationStart);
         reservation.setReservationEnd(reservationEnd);
+        reservation.setReservationStatus(ReservationStatus.IN_PROGRESS);
 
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));

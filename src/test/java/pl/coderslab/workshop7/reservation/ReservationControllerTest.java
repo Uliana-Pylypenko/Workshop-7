@@ -33,6 +33,14 @@ class ReservationControllerTest {
         LocalDate reservationStart = LocalDate.of(2020, 1, 1);
         LocalDate reservationEnd = LocalDate.of(2020, 2, 1);
 
+        Reservation reservation = new Reservation();
+        reservation.setId(1L);
+        reservation.setReservationStart(reservationStart);
+        reservation.setReservationEnd(reservationEnd);
+
+        when(reservationService.create(userId, accommodationId, reservationStart, reservationEnd))
+                .thenReturn(reservation);
+
         mockMvc.perform(MockMvcRequestBuilders.post("/reservation/create")
                 .param("userId", String.valueOf(userId))
                 .param("accommodationId", String.valueOf(accommodationId))
@@ -40,11 +48,9 @@ class ReservationControllerTest {
                 .param("reservationEndString", String.valueOf(reservationEnd)))
 
                 .andDo(print())
-                .andExpect(status().isCreated());
-//                .andExpect(jsonPath("$.user.id").value(userId))
-//                .andExpect(jsonPath("$.accommodation.id").value(accommodationId))
-//                .andExpect(jsonPath("$.reservationStart").value(reservationStart))
-//                .andExpect(jsonPath("$.reservationEnd").value(reservationEnd));
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.reservationStart").value(String.valueOf(reservationStart)))
+                .andExpect(jsonPath("$.reservationEnd").value(String.valueOf(reservationEnd)));
 
     }
 

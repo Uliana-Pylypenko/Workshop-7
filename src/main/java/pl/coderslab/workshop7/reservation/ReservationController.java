@@ -23,19 +23,23 @@ public class ReservationController {
                                                          @RequestParam Long accommodationId,
                                                          @RequestParam String reservationStartString,
                                                          @RequestParam String reservationEndString) {
+        LocalDate reservationStart = LocalDate.parse(reservationStartString);
+        LocalDate reservationEnd = LocalDate.parse(reservationEndString);
+        Reservation savedReservation = reservationService.create(userId, accommodationId, reservationStart, reservationEnd);
+        return new ResponseEntity<>(savedReservation, HttpStatus.CREATED);
 
-        try {
-            LocalDate reservationStart = LocalDate.parse(reservationStartString);
-            LocalDate reservationEnd = LocalDate.parse(reservationEndString);
-            Reservation savedReservation = reservationService.create(userId, accommodationId, reservationStart, reservationEnd);
-            return new ResponseEntity<>(savedReservation, HttpStatus.CREATED);
-
-        } catch (DateTimeParseException | IllegalArgumentException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-        } catch (EntityNotFoundException e1) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+//        try {
+//            LocalDate reservationStart = LocalDate.parse(reservationStartString);
+//            LocalDate reservationEnd = LocalDate.parse(reservationEndString);
+//            Reservation savedReservation = reservationService.create(userId, accommodationId, reservationStart, reservationEnd);
+//            return new ResponseEntity<>(savedReservation, HttpStatus.CREATED);
+//
+//        } catch (DateTimeParseException | IllegalArgumentException e) {
+//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+//
+//        } catch (EntityNotFoundException e1) {
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        }
 
     }
 }

@@ -3,6 +3,7 @@ package pl.coderslab.workshop7.reservation;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.coderslab.workshop7.accommodation.Accommodation;
 import pl.coderslab.workshop7.accommodation.AccommodationRepository;
 import pl.coderslab.workshop7.user.User;
@@ -19,10 +20,9 @@ public class ReservationServiceImpl implements ReservationService {
     private AccommodationRepository accommodationRepository;
 
     @Override
+    @Transactional
     public Reservation create(Long userId, Long accommodationId, LocalDate reservationStart, LocalDate reservationEnd) {
         Reservation reservation = new Reservation();
-
-        //reservation.setReservationStatus(ReservationStatus.IN_PROGRESS);
 
         Optional<User> user = userRepository.findById(userId);
         if (user.isPresent()) {
@@ -45,7 +45,15 @@ public class ReservationServiceImpl implements ReservationService {
             throw new IllegalArgumentException("Reservation start date is after reservation end date");
         }
 
-        return reservationRepository.save(reservation);
+        reservation.setReservationStatus(ReservationStatus.IN_PROGRESS);
+
+        System.out.println(reservation.getReservationStatus());
+
+        Reservation savedReservation = reservationRepository.save(reservation);
+
+        System.out.println("Saved reservation: " + savedReservation);
+
+        return savedReservation;
 
     }
 }
