@@ -2,16 +2,20 @@ package pl.coderslab.workshop7.reservation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityNotFoundException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import pl.coderslab.workshop7.user.User;
 
 import javax.swing.text.html.parser.Entity;
 import java.time.DateTimeException;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -28,6 +32,18 @@ class ReservationControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper = new ObjectMapper();
+
+    private Reservation reservation;
+
+    @BeforeEach
+    void setUp() {
+        reservation = new Reservation();
+        reservation.setId(1L);
+        LocalDate reservationStart = LocalDate.of(2020, 1, 1);
+        LocalDate reservationEnd = LocalDate.of(2020, 2, 1);
+        reservation.setReservationStart(reservationStart);
+        reservation.setReservationEnd(reservationEnd);
+    }
 
     @Test
     void createReservationTest() throws Exception {
@@ -110,5 +126,36 @@ class ReservationControllerTest {
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    void findAllByUserIdTest() throws Exception {
+        Long userId = 1L;
+        User user = new User();
+        user.setId(userId);
+        reservation.setUser(user);
+
+        when(reservationService.findAllByUserId(userId)).thenReturn(List.of(reservation));
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/reservation/all/1"))
+
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(reservation.getId().toString()))
+                .andExpect(jsonPath("$[0].user.id").value(user.getId().toString()))
+                .andExpect(jsonPath("$[0].reservationStart").value(reservation.getReservationStart().toString()))
+                .andExpect(jsonPath("$[0].reservationEnd").value(reservation.getReservationEnd().toString()));
+    }
+
+    @Test
+    void findAllByUserIdException() throws Exception {
+        when(reservationService.findAllByUserId(1L)).thenThrow(EntityNotFoundException.class);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/reservation/all/1"))
+
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+
 
 }

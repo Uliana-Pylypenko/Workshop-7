@@ -4,19 +4,19 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 
 @RestController
 @AllArgsConstructor
 @RequestMapping("/reservation")
 public class ReservationController {
     private final ReservationService reservationService;
+
+    // automatize EntityNotFoundException handling
 
     @PostMapping("/create")
     public ResponseEntity<Reservation> createReservation(@RequestParam Long userId,
@@ -36,6 +36,22 @@ public class ReservationController {
         } catch (EntityNotFoundException e1) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
 
+    @GetMapping("/all/{userId}")
+    public ResponseEntity<List<Reservation>> getAllReservations(@PathVariable Long userId) {
+        return new ResponseEntity<>(reservationService.findAllByUserId(userId), HttpStatus.OK);
+    }
+
+    // no tests
+    @GetMapping("/past/{userId}")
+    public ResponseEntity<List<Reservation>> getPastReservations(@PathVariable Long userId) {
+        return new ResponseEntity<>(reservationService.findPastReservationsByUserId(userId), HttpStatus.OK);
+    }
+
+    // no tests
+    @GetMapping("/current/{userId}")
+    public ResponseEntity<List<Reservation>> getCurrentReservations(@PathVariable Long userId) {
+        return new ResponseEntity<>(reservationService.findCurrentReservationsByUserId(userId), HttpStatus.OK);
     }
 }
