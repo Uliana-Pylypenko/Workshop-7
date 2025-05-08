@@ -51,9 +51,4 @@ public class ReservationController {
     public ResponseEntity<Reservation> updateReservationStatus(@RequestParam Long id, @RequestParam ReservationStatus status) {
         return new ResponseEntity<>(reservationService.updateReservationStatus(id, status), HttpStatus.OK);
     }
-
-    @PutMapping("/cancel")
-    public ResponseEntity<Reservation> cancelReservation(@RequestParam Long id) {
-        return new ResponseEntity<>(reservationService.cancelReservation(id), HttpStatus.OK);
-    }
 }

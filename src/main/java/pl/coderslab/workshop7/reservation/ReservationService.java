@@ -13,6 +13,4 @@ public interface ReservationService {
     List<Reservation> findCurrentReservationsByUserId(Long userId);
 
     Reservation updateReservationStatus(Long id, ReservationStatus status);
-
-    Reservation cancelReservation(Long id);
 }

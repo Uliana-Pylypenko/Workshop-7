@@ -11,9 +11,7 @@ import pl.coderslab.workshop7.accommodation.AccommodationRepository;
 import pl.coderslab.workshop7.user.User;
 import pl.coderslab.workshop7.user.UserRepository;
 
-import java.time.Clock;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +23,6 @@ public class ReservationServiceImpl implements ReservationService {
     private ReservationRepository reservationRepository;
     private UserRepository userRepository;
     private AccommodationRepository accommodationRepository;
-    private Clock clock;
 
     private static Logger logger = LoggerFactory.getLogger(ReservationServiceImpl.class);
 
@@ -61,7 +58,6 @@ public class ReservationServiceImpl implements ReservationService {
         }
 
         reservation.setReservationStatus(ReservationStatus.IN_PROGRESS);
-        reservation.setDateOfReservation(LocalDateTime.now(clock));
 
         Reservation savedReservation = reservationRepository.save(reservation);
 
@@ -80,7 +76,7 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public List<Reservation> findPastReservationsByUserId(Long userId) {
         checkUserExists(userId);
-        return reservationRepository.findPastReservationsByUserId(userId, LocalDate.now(clock));
+        return reservationRepository.findPastReservationsByUserId(userId);
     }
 
     @Override
@@ -93,14 +89,6 @@ public class ReservationServiceImpl implements ReservationService {
     public Reservation updateReservationStatus(Long id, ReservationStatus status) {
         Reservation reservation = reservationRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         reservation.setReservationStatus(status);
-        reservationRepository.save(reservation);
-        return reservation;
-    }
-
-    @Override
-    public Reservation cancelReservation(Long id) {
-        Reservation reservation = reservationRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        reservation.setReservationStatus(ReservationStatus.CANCELLED);
         reservationRepository.save(reservation);
         return reservation;
     }
