@@ -62,4 +62,13 @@ public class ReviewServiceImpl implements ReviewService {
             throw new EntityNotFoundException("Festival not found");
         }
     }
+
+    @Override
+    public List<Review> findAllByAccommodationId(Long accommodationId) {
+        if (accommodationRepository.findById(accommodationId).isPresent()) {
+            return reviewRepository.findAllByAccommodationId(accommodationId);
+        } else {
+            throw new EntityNotFoundException("Accommodation not found");
+        }
+    }
 }

@@ -8,4 +8,6 @@ public interface ReviewService {
     Review addAccommodationReview(Long userId, Long accommodationId, int rating, String comment);
 
     List<Review> findAllByFestivalId(Long festivalId);
+
+    List<Review> findAllByAccommodationId(Long accommodationId);
 }

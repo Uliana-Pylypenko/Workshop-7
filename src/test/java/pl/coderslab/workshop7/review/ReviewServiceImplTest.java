@@ -146,6 +146,7 @@ class ReviewServiceImplTest {
 
         assertThat(reviews)
                 .isNotEmpty()
+                .hasSize(1)
                 .containsExactly(festivalReview);
     }
 
@@ -153,8 +154,36 @@ class ReviewServiceImplTest {
     void givenNonExistingFestival_whenFindAllByFestivalId_thenThrowEntityNotFoundException() {
         when(festivalRepository.findById(festival.getId())).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () ->
+        EntityNotFoundException entityNotFoundException =
+                assertThrows(EntityNotFoundException.class, () ->
                 service.findAllByFestivalId(festival.getId()));
+
+        assertThat(entityNotFoundException.getMessage()).isEqualTo("Festival not found");
+    }
+
+
+    @Test
+    void whenFindAllByAccommodationId_thenReturnReviewList() {
+        when(accommodationRepository.findById(accommodation.getId())).thenReturn(Optional.of(accommodation));
+        when(reviewRepository.findAllByAccommodationId(accommodation.getId())).thenReturn(List.of(accommodationReview));
+
+        List<Review> reviews = service.findAllByAccommodationId(accommodation.getId());
+
+        assertThat(reviews)
+                .isNotEmpty()
+                .hasSize(1)
+                .containsExactly(accommodationReview);
+    }
+
+    @Test
+    void givenNonExistingAccommodation_whenFindAllByAccommodationId_thenThrowEntityNotFoundException() {
+        when(accommodationRepository.findById(accommodation.getId())).thenReturn(Optional.empty());
+
+        EntityNotFoundException entityNotFoundException =
+                assertThrows(EntityNotFoundException.class, () ->
+                service.findAllByAccommodationId(accommodation.getId()));
+
+        assertThat(entityNotFoundException.getMessage()).isEqualTo("Accommodation not found");
     }
 
 }
