@@ -32,12 +32,14 @@ class UserServiceTest {
         when(repository.save(user)).thenReturn(user);
 
         User result = service.registerUser(user);
+
         assertNotNull(result);
         assertEquals(user, result);
+        verify(repository, times(1)).save(user);
     }
 
     @Test
-    void givenExistingUser_whenRegisterUser_thenThrowException() {
+    void givenExistingUser_whenRegisterUser_thenThrowIllegalArgumentException() {
         when(repository.findOneByEmail(user.getEmail())).thenReturn(Optional.of(user));
 
         assertThrows(IllegalArgumentException.class, () -> service.registerUser(user));
@@ -50,6 +52,7 @@ class UserServiceTest {
         when(repository.findOneByUsernameAndPassword(user.getUsername(), user.getPassword())).thenReturn(Optional.of(user));
 
         User result = service.loginUser(user.getUsername(), user.getPassword());
+
         assertNotNull(result);
         assertEquals(user, result);
     }

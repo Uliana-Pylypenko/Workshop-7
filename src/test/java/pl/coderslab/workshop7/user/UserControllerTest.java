@@ -12,7 +12,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
@@ -39,7 +38,7 @@ class UserControllerTest {
     }
 
     @Test
-    void registerUser() throws Exception {
+    void whenRegisterUser_thenReturnUser() throws Exception {
         user.setId(1L);
         when(userService.registerUser(any(User.class))).thenReturn(user);
 
@@ -50,11 +49,13 @@ class UserControllerTest {
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1L))
-                .andExpect(jsonPath("$.username").value("username"));
+                .andExpect(jsonPath("$.username").value("username"))
+                .andExpect(jsonPath("$.email").value("email@email.com"))
+                .andExpect(jsonPath("$.password").value("password"));
     }
 
     @Test
-    void loginUser() throws Exception {
+    void whenLoginUser_thenReturnUser() throws Exception {
         user.setId(1L);
         when(userService.loginUser(anyString(), anyString())).thenReturn(user);
 
@@ -64,15 +65,17 @@ class UserControllerTest {
 
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.username").value(user.getUsername()));
+                .andExpect(jsonPath("$.username").value("username"))
+                .andExpect(jsonPath("$.email").value("email@email.com"))
+                .andExpect(jsonPath("$.password").value("password"));
     }
 
     @Test
-    public void testLoginUser_InvalidCredentials() throws Exception {
+    void givenInvalidCredentials_whenLoginUser_throwIllegalArgumentException() throws Exception {
         when(userService.loginUser(anyString(), anyString())).thenThrow(new IllegalArgumentException("Invalid username/email or password"));
 
         mockMvc.perform(post("/user/login")
-                        .param("username", "user")
+                        .param("username", "username")
                         .param("password", "wrongpassword"))
                 .andDo(print())
                 .andExpect(status().isUnauthorized());
