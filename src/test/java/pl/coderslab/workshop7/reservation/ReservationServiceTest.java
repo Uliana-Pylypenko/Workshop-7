@@ -19,11 +19,12 @@ import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.as;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ReservationServiceTest {
@@ -208,6 +209,27 @@ class ReservationServiceTest {
                         {service.findCurrentReservationsByUserId(userId);});
 
         assertThat(entityNotFoundException.getMessage()).isEqualTo("User not found");
+    }
+
+    @Test
+    void whenUpdateReservationStatus_thenReturnReservationWithUpdatedStatus() {
+        when(reservationRepository.findById(1L)).thenReturn(Optional.of(reservation1));
+
+        ReservationStatus newStatus = ReservationStatus.CONFIRMED;
+        Reservation updatedReservation = service.updateReservationStatus(1L, newStatus);
+
+        assertThat(updatedReservation.getReservationStatus()).isEqualTo(newStatus);
+
+        verify(reservationRepository, times(1)).save(reservation1);
+    }
+
+    @Test
+    void whenUpdateNonExistentReservationStatus_thenThrowEntityNotFoundException() {
+        when(reservationRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> service.updateReservationStatus(1L, ReservationStatus.CONFIRMED));
+
+        verify(reservationRepository, never()).save(any(Reservation.class));
     }
 
 

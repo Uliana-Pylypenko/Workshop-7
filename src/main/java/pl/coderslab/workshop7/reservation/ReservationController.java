@@ -46,4 +46,9 @@ public class ReservationController {
     public ResponseEntity<List<Reservation>> getCurrentReservations(@PathVariable Long userId) {
         return new ResponseEntity<>(reservationService.findCurrentReservationsByUserId(userId), HttpStatus.OK);
     }
+
+    @PutMapping("/update-status")
+    public ResponseEntity<Reservation> updateReservationStatus(@RequestParam Long id, @RequestParam ReservationStatus status) {
+        return new ResponseEntity<>(reservationService.updateReservationStatus(id, status), HttpStatus.OK);
+    }
 }

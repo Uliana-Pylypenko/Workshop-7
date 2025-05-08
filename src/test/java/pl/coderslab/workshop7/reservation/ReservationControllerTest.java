@@ -15,6 +15,7 @@ import pl.coderslab.workshop7.user.User;
 import java.time.LocalDate;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -207,6 +208,37 @@ class ReservationControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    @Test
+    void whenUpdateReservationStatus_thenReturnReservationWithUpdatedStatus() throws Exception {
+        Long id = 1L;
+        ReservationStatus newStatus = ReservationStatus.CONFIRMED;
+        reservation1.setReservationStatus(newStatus);
+        when(reservationService.updateReservationStatus(id, newStatus)).thenReturn(reservation1);
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/reservation/update-status")
+                .param("id", String.valueOf(id))
+                .param("status", newStatus.toString()))
+
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(String.valueOf(id)))
+                .andExpect(jsonPath("$.reservationStatus").value(newStatus.toString()));
+    }
+
+    @Test
+    void whenUpdateNonExistingReservationStatus_thenCatchEntityNotFoundException() throws Exception {
+        Long id = 1L;
+        ReservationStatus newStatus = ReservationStatus.CONFIRMED;
+        reservation1.setReservationStatus(newStatus);
+        when(reservationService.updateReservationStatus(id, newStatus)).thenThrow(EntityNotFoundException.class);
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/reservation/update-status")
+                        .param("id", String.valueOf(id))
+                        .param("status", newStatus.toString()))
+
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
 
 
 

@@ -85,4 +85,12 @@ public class ReservationServiceImpl implements ReservationService {
         return reservationRepository.findCurrentReservationsByUserId(userId);
     }
 
+    @Override
+    public Reservation updateReservationStatus(Long id, ReservationStatus status) {
+        Reservation reservation = reservationRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        reservation.setReservationStatus(status);
+        reservationRepository.save(reservation);
+        return reservation;
+    }
+
 }
