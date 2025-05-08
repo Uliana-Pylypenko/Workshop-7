@@ -13,6 +13,7 @@ import pl.coderslab.workshop7.user.UserRepository;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -60,9 +61,9 @@ public class ReservationServiceImpl implements ReservationService {
         }
 
         reservation.setReservationStatus(ReservationStatus.IN_PROGRESS);
+        reservation.setDateOfReservation(LocalDateTime.now(clock));
 
         Reservation savedReservation = reservationRepository.save(reservation);
-
 
         logger.info("Saved reservation: {}", savedReservation);
 

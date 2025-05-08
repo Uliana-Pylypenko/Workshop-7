@@ -13,10 +13,7 @@ import pl.coderslab.workshop7.accommodation.AccommodationRepository;
 import pl.coderslab.workshop7.user.User;
 import pl.coderslab.workshop7.user.UserRepository;
 
-import java.time.Clock;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.util.List;
 import java.util.Optional;
 
@@ -77,6 +74,7 @@ class ReservationServiceTest {
         reservation1.setReservationStart(reservationStart);
         reservation1.setReservationEnd(reservationEnd);
         reservation1.setReservationStatus(ReservationStatus.IN_PROGRESS);
+        reservation1.setDateOfReservation(LocalDateTime.of(2020, 1, 1, 1, 1));
 
         reservation2 = new Reservation();
         reservation2.setId(2L);
@@ -90,6 +88,8 @@ class ReservationServiceTest {
 
     @Test
     void whenSaveReservation_thenReturnSavedReservation() {
+        Mockito.when(clock.instant()).thenReturn(fixedClock.instant());
+        Mockito.when(clock.getZone()).thenReturn(fixedClock.getZone());
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(accommodationRepository.findById(accommodationId)).thenReturn(Optional.of(accommodation));
@@ -103,6 +103,7 @@ class ReservationServiceTest {
         assertThat(savedReservation.getReservationStart()).isEqualTo(reservationStart);
         assertThat(savedReservation.getReservationEnd()).isEqualTo(reservationEnd);
         assertThat(savedReservation.getReservationStatus()).isEqualTo(ReservationStatus.IN_PROGRESS);
+        assertThat(savedReservation.getDateOfReservation()).isEqualTo(reservation1.getDateOfReservation());
     }
 
     @Test
