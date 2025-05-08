@@ -2,17 +2,17 @@ package pl.coderslab.workshop7.festival;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+
 import static org.assertj.core.api.Assertions.assertThat;
-import pl.coderslab.workshop7.user.UserRepository;
 
-import java.time.LocalDate;
+import java.time.*;
 import java.util.List;
-import java.util.Optional;
 
-import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
@@ -23,12 +23,19 @@ class FestivalRepositoryTest {
     @Autowired
     private FestivalRepository repository;
 
+    @MockitoBean
+    private Clock clock;
+
     private Festival festival1;
     private Festival festival2;
     private Festival festival3;
 
     @BeforeEach
     void setUp() {
+        Clock fixedClock = Clock.fixed(LocalDate.of(2023, 1, 1).atStartOfDay(ZoneOffset.UTC).toInstant(), ZoneId.of("UTC"));
+        Mockito.when(clock.instant()).thenReturn(fixedClock.instant());
+        Mockito.when(clock.getZone()).thenReturn(fixedClock.getZone());
+
         festival1 = new Festival();
         festival1.setStartDate(LocalDate.of(2020, 1, 1));
         festival1.setName("Festival1");
@@ -52,7 +59,7 @@ class FestivalRepositoryTest {
     }
 
     @Test
-    void findUpcomingFestivalsTest() {
+    void whenFindUpcomingFestivals_thenReturnListOfFestival2Festival3() {
         List<Festival> upcomingFestivals = repository.findUpcomingFestivals();
 
         assertThat(upcomingFestivals)
@@ -62,9 +69,9 @@ class FestivalRepositoryTest {
     }
 
     @Test
-    void findOneByNameTest() {
-
+    void whenFindAllByNameContainingIgnoreCase_thenReturnMatchingFestivals() {
         List<Festival> foundFestivals = repository.findAllByNameContainingIgnoreCase(festival1.getName());
+
         assertThat(foundFestivals)
                 .isNotEmpty()
                 .hasSize(1)
@@ -78,7 +85,15 @@ class FestivalRepositoryTest {
     }
 
     @Test
-    void findAllByLocationTest() {
+    void whenFindAllByNonExistingNameContainingIgnoreCase_thenReturnEmptyList() {
+        List<Festival> foundFestivals = repository.findAllByNameContainingIgnoreCase("nonExisting");
+
+        assertThat(foundFestivals)
+            .isEmpty();
+    }
+
+    @Test
+    void whenFindAllByLocationContainingIgnoreCase_thenReturnMatchingFestivals() {
         List<Festival> festivalsInWarsaw = repository.findAllByLocationContainingIgnoreCase("Warszawa");
         assertThat(festivalsInWarsaw)
                 .isNotEmpty()
@@ -93,7 +108,15 @@ class FestivalRepositoryTest {
     }
 
     @Test
-    void findAllByStartDateBetweenTest() {
+    void whenFindAllByNonExistingLocationContainingIgnoreCase_thenReturnEmptyList() {
+        List<Festival> foundFestivals = repository.findAllByLocationContainingIgnoreCase("nonExisting");
+
+        assertThat(foundFestivals)
+            .isEmpty();
+    }
+
+    @Test
+    void whenFindAllByStartDateBetween_thenReturnMatchingFestivalsIn2026() {
         List<Festival> festivalsIn2026 = repository.findAllByStartDateBetween(LocalDate.of(2026, 1, 1), LocalDate.of(2026, 12, 31));
         assertThat(festivalsIn2026)
                 .isNotEmpty()
@@ -101,9 +124,17 @@ class FestivalRepositoryTest {
                 .containsExactly(festival3);
     }
 
+    @Test
+    void whenFindAllByEndDateBetween_thenReturnEmptyList() {
+        List<Festival> festivalsIn2028 = repository.findAllByStartDateBetween(LocalDate.of(2028, 1, 1), LocalDate.of(2028, 12, 31));
+
+        assertThat(festivalsIn2028)
+            .isEmpty();
+    }
+
 
     @Test
-    void findAllByPricePerDayBetween() {
+    void whenFindAllByPricePerDayBetween_thenReturnMatchingFestivals() {
         List<Festival> pricesBetween5and10 = repository.findAllByPricePerDayBetween(5.0, 10.0);
 
         assertThat(pricesBetween5and10)
