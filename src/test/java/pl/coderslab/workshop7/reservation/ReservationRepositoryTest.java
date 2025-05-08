@@ -29,7 +29,7 @@ class ReservationRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        user = new User("test", "test", "test");
+        user = new User("test", "test@gmail.com", "test");
         entityManager.persist(user);
 
         accommodation = new Accommodation();

@@ -1,12 +1,10 @@
 package pl.coderslab.workshop7.festival;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -18,8 +16,13 @@ public class FestivalController {
 
     @GetMapping("/category/{categoryId}")
     public ResponseEntity<List<Festival>> getUpcomingFestivalsByCategory(@PathVariable int categoryId) {
-        FestivalCategory category = FestivalCategory.getById(categoryId);
-        return ResponseEntity.ok(festivalService.getUpcomingFestivalsByCategory(category));
+        try {
+            FestivalCategory category = FestivalCategory.getById(categoryId);
+            return ResponseEntity.ok(festivalService.getUpcomingFestivalsByCategory(category));
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
     }
 
     @GetMapping("/name/{name}")

@@ -11,11 +11,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import pl.coderslab.workshop7.user.User;
 
-import javax.swing.text.html.parser.Entity;
-import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -130,8 +127,7 @@ class ReservationControllerTest {
     @Test
     void findAllByUserIdTest() throws Exception {
         Long userId = 1L;
-        User user = new User();
-        user.setId(userId);
+        User user = new User(userId, "test", "test@test.com", "test");
         reservation.setUser(user);
 
         when(reservationService.findAllByUserId(userId)).thenReturn(List.of(reservation));

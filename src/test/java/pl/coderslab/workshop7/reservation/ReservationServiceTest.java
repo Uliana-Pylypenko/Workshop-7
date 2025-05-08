@@ -55,8 +55,7 @@ class ReservationServiceTest {
     @BeforeEach
     void setUp() {
         userId = 1L;
-        user = new User();
-        user.setId(userId);
+        user = new User(userId, "test", "test@gmail.com", "test");
 
         accommodationId = 1L;
         accommodation = new Accommodation();

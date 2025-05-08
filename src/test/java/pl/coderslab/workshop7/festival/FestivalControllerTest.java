@@ -44,8 +44,8 @@ class FestivalControllerTest {
     }
 
     @Test
-    void getUpcomingFestivalsByCategory() throws Exception {
-        when(service.getUpcomingFestivalsByCategory(any(FestivalCategory.class))).thenReturn(List.of(festival));
+    void whenGetUpcomingFestivalsByCategory_thenReturnFestival() throws Exception {
+        when(service.getUpcomingFestivalsByCategory(FestivalCategory.MUSIC)).thenReturn(List.of(festival));
 
         mockMvc.perform(get("/festival/category/1"))
 
@@ -56,7 +56,16 @@ class FestivalControllerTest {
     }
 
     @Test
-    void getFestivalsByName() throws Exception {
+    void whenGetUpcomingFestivalsByNonExistingCategory_thenReturnFestival() throws Exception {
+        mockMvc.perform(get("/festival/category/10"))
+
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+
+    }
+
+    @Test
+    void whenGetFestivalsByName_thenReturnFestival() throws Exception {
         when(service.findAllByNameContainingIgnoreCase(any(String.class))).thenReturn(List.of(festival));
 
         mockMvc.perform(get("/festival/name/Festival"))
@@ -73,7 +82,7 @@ class FestivalControllerTest {
     }
 
     @Test
-    void getFestivalsByLocation() throws Exception {
+    void whenGetFestivalsByLocation_thenReturnFestival() throws Exception {
         when(service.findAllByLocationContainingIgnoreCase(any(String.class))).thenReturn(List.of(festival));
 
         mockMvc.perform(get("/festival/location/Warszawa"))
@@ -91,7 +100,7 @@ class FestivalControllerTest {
     }
 
     @Test
-    void getFestivalByStartDateTest() throws Exception {
+    void whenGetFestivalByStartDate_thenReturnFestival() throws Exception {
         when(service.findAllByStartDateBetween(any(LocalDate.class), any(LocalDate.class))).thenReturn(List.of(festival));
 
         mockMvc.perform(get("/festival/start-date")
@@ -106,7 +115,7 @@ class FestivalControllerTest {
     }
 
     @Test
-    void getFestivalByStartDateExceptionTest() throws Exception {
+    void whenGetFestivalByWrongStartDate_thenThrowIllegalArgumentException() throws Exception {
         when(service.findAllByStartDateBetween(any(LocalDate.class), any(LocalDate.class))).thenThrow(new IllegalArgumentException());
 
         mockMvc.perform(get("/festival/start-date")
@@ -118,7 +127,7 @@ class FestivalControllerTest {
     }
 
     @Test
-    void getFestivalByEndDate() throws Exception {
+    void whenGetFestivalById_thenReturnFestival() throws Exception {
         when(service.getFestivalById(any(Long.class))).thenReturn(festival);
 
         mockMvc.perform(get("/festival/details/1"))
@@ -131,7 +140,7 @@ class FestivalControllerTest {
     }
 
     @Test
-    void getFestivalByPriceRangeTest() throws Exception {
+    void whenGetFestivalByPriceRange_thenReturnFestival() throws Exception {
         when(service.findAllByPricePerDayBetween(any(Double.class), any(Double.class))).thenReturn(List.of(festival));
         double lower = 5.0;
         double higher = 10.0;
@@ -145,7 +154,7 @@ class FestivalControllerTest {
     }
 
     @Test
-    void getFestivalByPriceRangeExceptionTest() throws Exception {
+    void whenGetFestivalByWrongPriceRange_thenThrowIllegalArgumentException() throws Exception {
         when(service.findAllByPricePerDayBetween(any(Double.class), any(Double.class))).thenThrow(new IllegalArgumentException());
         double lower = 10.0;
         double higher = 5.0;

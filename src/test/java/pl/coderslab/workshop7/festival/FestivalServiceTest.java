@@ -62,7 +62,7 @@ class FestivalServiceTest {
 
 
     @Test
-    void givenFestivalList_whenGetUpcomingFestivalsByCategory_thenReturnFestivalList() {
+    void whenGetUpcomingFestivalsByCategory_thenReturnFestivalList() {
         when(repository.findUpcomingFestivals()).thenReturn(festivalList);
 
         assertThat(service.getUpcomingFestivalsByCategory(FestivalCategory.FILM))
@@ -82,7 +82,7 @@ class FestivalServiceTest {
     }
 
     @Test
-    void givenFestivalList_whenFindAllByNameContainingIgnoreCase_thenReturnFestivals() {
+    void whenFindAllByNameContainingIgnoreCase_thenReturnFestivals() {
         when(repository.findAllByNameContainingIgnoreCase("Festival1")).thenReturn(List.of(festival1));
         when(repository.findAllByNameContainingIgnoreCase("festival")).thenReturn(festivalList);
 
@@ -98,7 +98,7 @@ class FestivalServiceTest {
     }
 
     @Test
-    void givenFestivalList_whenFindAllByLocationContainingIgnoreCase_thenReturnFestivals() {
+    void whenFindAllByLocationContainingIgnoreCase_thenReturnFestivals() {
         when(repository.findAllByLocationContainingIgnoreCase("Warszawa")).thenReturn(List.of(festival1));
         when(repository.findAllByLocationContainingIgnoreCase("war")).thenReturn(List.of(festival1, festival2));
 
@@ -114,7 +114,7 @@ class FestivalServiceTest {
     }
 
     @Test
-    void givenFestivalList_whenFindAllByStartDateBetween_thenReturnFestivals() {
+    void whenFindAllByStartDateBetween_thenReturnFestivals() {
         LocalDate startDate1 = LocalDate.of(2026, 1, 1);
         LocalDate startDate2 = LocalDate.of(2027, 7, 2);
         LocalDate endDate = LocalDate.of(2026, 12, 31);
@@ -129,8 +129,9 @@ class FestivalServiceTest {
         assertThrows(IllegalArgumentException.class, () -> service.findAllByStartDateBetween(startDate2, endDate));
     }
 
+
     @Test
-    void givenFestival_whenGetDetailsById_thenReturnFestival() {
+    void whenGetDetailsById_thenReturnFestival() {
         when(repository.findById(1L)).thenReturn(Optional.of(festival1));
 
         assertThat(service.getFestivalById(1L))
@@ -139,7 +140,7 @@ class FestivalServiceTest {
     }
 
     @Test
-    void givenFestivalList_whenFindAllByPricePerDayBetween_thenReturnFestivals() {
+    void whenFindAllByPricePerDayBetween_thenReturnFestivals() {
         double priceLower1 = 5.0;
         double priceHigher1 = 10.0;
         when(repository.findAllByPricePerDayBetween(priceLower1, priceHigher1)).thenReturn(festivalList);
@@ -159,10 +160,8 @@ class FestivalServiceTest {
 
     @Test
     void givenPriceLowerIsHigher_whenFindAllByPricePerDayBetween_thenThrowException() {
-        double priceLower = 5.0;
-        double priceHigher = 10.0;
-
-        when(repository.findAllByPricePerDayBetween(priceLower, priceHigher)).thenThrow(new IllegalArgumentException());
+        double priceLower = 10.0;
+        double priceHigher = 5.0;
 
         assertThrows(IllegalArgumentException.class, () -> service.findAllByPricePerDayBetween(priceLower, priceHigher));
     }
