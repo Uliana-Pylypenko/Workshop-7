@@ -14,6 +14,7 @@ import pl.coderslab.workshop7.user.UserRepository;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,7 +28,7 @@ public class ReservationServiceImpl implements ReservationService {
     private AccommodationRepository accommodationRepository;
     private Clock clock;
 
-    private static Logger logger = LoggerFactory.getLogger(ReservationServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(ReservationServiceImpl.class);
 
     private void checkUserExists(Long userId) {
         if (userRepository.findById(userId).isEmpty()) {
@@ -94,6 +95,34 @@ public class ReservationServiceImpl implements ReservationService {
         reservation.setReservationStatus(status);
         reservationRepository.save(reservation);
         return reservation;
+    }
+
+    @Override
+    public ReservationConfirmation generateConfirmation(Long id) {
+        Optional<Reservation> reservationOptional = reservationRepository.findById(id);
+        if (reservationOptional.isPresent()) {
+            ReservationConfirmation confirmation = new ReservationConfirmation();
+            Reservation reservation = reservationOptional.get();
+            confirmation.setReservationId(id);
+            confirmation.setDateOfReservation(reservation.getDateOfReservation());
+            confirmation.setReservationStart(reservation.getReservationStart());
+            confirmation.setReservationEnd(reservation.getReservationEnd());
+            confirmation.setReservationStatus(reservation.getReservationStatus());
+
+            User user = reservation.getUser();
+            confirmation.setUsername(user.getUsername());
+            confirmation.setEmail(user.getEmail());
+
+            Accommodation accommodation = reservation.getAccommodation();
+            confirmation.setAccommodationName(accommodation.getName());
+            long days = ChronoUnit.DAYS.between(reservation.getReservationStart(), reservation.getReservationEnd()) + 1L;
+            confirmation.setTotalPrice(days * accommodation.getPricePerDay());
+            confirmation.setLocation(accommodation.getLocation());
+
+            return confirmation;
+        } else {
+            throw new EntityNotFoundException("Reservation not found");
+        }
     }
 
 }

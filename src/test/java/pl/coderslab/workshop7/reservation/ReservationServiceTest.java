@@ -58,14 +58,18 @@ class ReservationServiceTest {
         LocalDate fixedDate = LocalDate.now(fixedClock);
 
         userId = 1L;
-        user = new User(userId, "test", "test@gmail.com", "test");
+        user = new User(userId, "user", "user@gmail.com", "test");
 
         accommodationId = 1L;
         accommodation = new Accommodation();
         accommodation.setId(accommodationId);
+        accommodation.setName("Accommodation name");
+        accommodation.setLocation("Accommodation location");
+        accommodation.setPricePerDay(100.0);
+
 
         reservationStart = LocalDate.of(2020, 1, 1);
-        reservationEnd = LocalDate.of(2020, 2, 1);
+        reservationEnd = LocalDate.of(2020, 1, 5);
 
         reservation1 = new Reservation();
         reservation1.setId(1L);
@@ -240,5 +244,32 @@ class ReservationServiceTest {
         verify(reservationRepository, never()).save(any(Reservation.class));
     }
 
+    @Test
+    void whenGenerateConfirmation_thenReturnConfirmation() {
+        when(reservationRepository.findById(1L)).thenReturn(Optional.of(reservation1));
+
+        ReservationConfirmation confirmation = service.generateConfirmation(1L);
+
+        assertThat(confirmation).isNotNull();
+
+        assertThat(confirmation.getReservationId()).isEqualTo(reservation1.getId());
+        assertThat(confirmation.getDateOfReservation()).isEqualTo(reservation1.getDateOfReservation());
+        assertThat(confirmation.getReservationStart()).isEqualTo(reservation1.getReservationStart());
+        assertThat(confirmation.getReservationEnd()).isEqualTo(reservation1.getReservationEnd());
+        assertThat(confirmation.getReservationStatus()).isEqualTo(reservation1.getReservationStatus());
+
+        assertThat(confirmation.getUsername()).isEqualTo(user.getUsername());
+        assertThat(confirmation.getEmail()).isEqualTo(user.getEmail());
+
+        assertThat(confirmation.getAccommodationName()).isEqualTo(accommodation.getName());
+        assertThat(confirmation.getTotalPrice()).isEqualTo(500.0);
+        assertThat(confirmation.getLocation()).isEqualTo(accommodation.getLocation());
+    }
+
+    @Test
+    void whenGenerateConfirmationForNonExistentReservation_thenThrowEntityNotFoundException() {
+        when(reservationRepository.findById(1L)).thenReturn(Optional.empty());
+        assertThrows(EntityNotFoundException.class, () -> service.generateConfirmation(1L));
+    }
 
 }

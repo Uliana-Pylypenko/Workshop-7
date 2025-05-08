@@ -32,23 +32,28 @@ public class ReservationController {
         }
     }
 
-    @GetMapping("/all/{userId}")
-    public ResponseEntity<List<Reservation>> getAllReservations(@PathVariable Long userId) {
+    @GetMapping("/all")
+    public ResponseEntity<List<Reservation>> getAllReservations(@RequestParam Long userId) {
         return new ResponseEntity<>(reservationService.findAllByUserId(userId), HttpStatus.OK);
     }
 
-    @GetMapping("/past/{userId}")
-    public ResponseEntity<List<Reservation>> getPastReservations(@PathVariable Long userId) {
+    @GetMapping("/past")
+    public ResponseEntity<List<Reservation>> getPastReservations(@RequestParam Long userId) {
         return new ResponseEntity<>(reservationService.findPastReservationsByUserId(userId), HttpStatus.OK);
     }
 
-    @GetMapping("/current/{userId}")
-    public ResponseEntity<List<Reservation>> getCurrentReservations(@PathVariable Long userId) {
+    @GetMapping("/current")
+    public ResponseEntity<List<Reservation>> getCurrentReservations(@RequestParam Long userId) {
         return new ResponseEntity<>(reservationService.findCurrentReservationsByUserId(userId), HttpStatus.OK);
     }
 
     @PutMapping("/update-status")
     public ResponseEntity<Reservation> updateReservationStatus(@RequestParam Long id, @RequestParam ReservationStatus status) {
         return new ResponseEntity<>(reservationService.updateReservationStatus(id, status), HttpStatus.OK);
+    }
+
+    @GetMapping("/confirmation")
+    public ResponseEntity<ReservationConfirmation> getReservationConfirmation(@RequestParam Long id) {
+        return new ResponseEntity<>(reservationService.generateConfirmation(id), HttpStatus.OK);
     }
 }

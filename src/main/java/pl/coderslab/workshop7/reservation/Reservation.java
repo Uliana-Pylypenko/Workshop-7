@@ -33,27 +33,27 @@ public class Reservation {
     private LocalDate reservationStart;
     private LocalDate reservationEnd;
 
-//    @Enumerated(EnumType.STRING)
-//    private ReservationStatus reservationStatus;
-
-    // saves just numbers in the database
-    @Basic
-    private int reservationStatusValue;
-
-    @Transient
+    @Enumerated(EnumType.STRING)
     private ReservationStatus reservationStatus;
 
-    @PostLoad
-    void fillTransient() {
-        if (reservationStatusValue > 0) {
-            this.reservationStatus = ReservationStatus.fromInt(reservationStatusValue);
-        }
-    }
-
-    @PrePersist
-    void fillPersistent() {
-        if (reservationStatus != null) {
-            this.reservationStatusValue = reservationStatus.getValue();
-        }
-    }
+    // saves just numbers in the database
+//    @Basic
+//    private int reservationStatusValue;
+//
+//    @Transient
+//    private ReservationStatus reservationStatus;
+//
+//    @PostLoad
+//    void fillTransient() {
+//        if (reservationStatusValue > 0) {
+//            this.reservationStatus = ReservationStatus.fromInt(reservationStatusValue);
+//        }
+//    }
+//
+//    @PrePersist
+//    void fillPersistent() {
+//        if (reservationStatus != null) {
+//            this.reservationStatusValue = reservationStatus.getValue();
+//        }
+//    }
 }
