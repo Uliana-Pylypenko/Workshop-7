@@ -65,5 +65,19 @@ class ReviewRepositoryTest {
         assertThat(review.getRating()).isEqualTo(rating);
     }
 
+    @Test
+    void whenFindAllByAccommodationId_thenReturnListOfAccommodationReviews() {
+        List<Review> reviewList = repository.findAllByAccommodationId(accommodation.getId());
+
+        assertThat(reviewList)
+                .isNotEmpty()
+                .hasSize(1);
+
+        Review review = reviewList.get(0);
+        assertThat(review.getUser().getId()).isEqualTo(user.getId());
+        assertThat(review.getAccommodation().getId()).isEqualTo(accommodation.getId());
+        assertThat(review.getComment()).isEqualTo(comment);
+        assertThat(review.getRating()).isEqualTo(rating);
+    }
 
 }

@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<Review> findAllByFestivalId(Long festivalId);
+
+    List<Review> findAllByAccommodationId(Long accommodationId);
 }
