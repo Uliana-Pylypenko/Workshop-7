@@ -55,6 +55,9 @@ class ReservationServiceTest {
 
     @BeforeEach
     void setUp() {
+        Clock fixedClock = Clock.fixed(LocalDate.of(2023, 1, 1).atStartOfDay(ZoneOffset.UTC).toInstant(), ZoneId.of("UTC"));
+        LocalDate fixedDate = LocalDate.now(fixedClock);
+        
         userId = 1L;
         user = new User(userId, "test", "test@gmail.com", "test");
 
@@ -77,8 +80,6 @@ class ReservationServiceTest {
         reservation2.setId(2L);
         reservation2.setUser(user);
         reservation2.setAccommodation(accommodation);
-        Clock fixedClock = Clock.fixed(LocalDate.of(2023, 1, 1).atStartOfDay(ZoneOffset.UTC).toInstant(), ZoneId.of("UTC"));
-        LocalDate fixedDate = LocalDate.now(fixedClock);
         reservation2.setReservationStart(fixedDate.minusDays(1));
         reservation2.setReservationEnd(fixedDate.plusDays(1));
         reservation2.setReservationEnd(reservationEnd);
@@ -165,7 +166,7 @@ class ReservationServiceTest {
     @Test
     void whenFindPastReservationsByUserId_thenReturnPastReservations() {
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-        when(reservationRepository.findPastReservationsByUserId(userId)).thenReturn(List.of(reservation1));
+        when(reservationRepository.findPastReservationsByUserId(userId, LocalDate.now(clock))).thenReturn(List.of(reservation1));
 
         List<Reservation> pastReservations = service.findPastReservationsByUserId(userId);
 
@@ -189,7 +190,7 @@ class ReservationServiceTest {
     @Test
     void whenFindCurrentReservationsByUserId_thenReturnListOfReservations() {
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-        when(reservationRepository.findCurrentReservationsByUserId(userId)).thenReturn(List.of(reservation2));
+        when(reservationRepository.findCurrentReservationsByUserId(userId, LocalDate.now(clock))).thenReturn(List.of(reservation2));
 
         List<Reservation> currentReservations = service.findCurrentReservationsByUserId(userId);
 

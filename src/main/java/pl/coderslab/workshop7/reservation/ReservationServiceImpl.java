@@ -11,6 +11,7 @@ import pl.coderslab.workshop7.accommodation.AccommodationRepository;
 import pl.coderslab.workshop7.user.User;
 import pl.coderslab.workshop7.user.UserRepository;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +24,7 @@ public class ReservationServiceImpl implements ReservationService {
     private ReservationRepository reservationRepository;
     private UserRepository userRepository;
     private AccommodationRepository accommodationRepository;
+    private Clock clock;
 
     private static Logger logger = LoggerFactory.getLogger(ReservationServiceImpl.class);
 
@@ -76,13 +78,13 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public List<Reservation> findPastReservationsByUserId(Long userId) {
         checkUserExists(userId);
-        return reservationRepository.findPastReservationsByUserId(userId);
+        return reservationRepository.findPastReservationsByUserId(userId, LocalDate.now(clock));
     }
 
     @Override
     public List<Reservation> findCurrentReservationsByUserId(Long userId) {
         checkUserExists(userId);
-        return reservationRepository.findCurrentReservationsByUserId(userId);
+        return reservationRepository.findCurrentReservationsByUserId(userId, LocalDate.now(clock));
     }
 
     @Override
