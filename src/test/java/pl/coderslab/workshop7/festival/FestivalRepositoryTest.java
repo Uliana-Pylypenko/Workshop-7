@@ -60,7 +60,7 @@ class FestivalRepositoryTest {
 
     @Test
     void whenFindUpcomingFestivals_thenReturnListOfFestival2Festival3() {
-        List<Festival> upcomingFestivals = repository.findUpcomingFestivals();
+        List<Festival> upcomingFestivals = repository.findUpcomingFestivals(LocalDate.now(clock));
 
         assertThat(upcomingFestivals)
                 .isNotEmpty()

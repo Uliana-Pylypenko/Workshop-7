@@ -3,6 +3,7 @@ package pl.coderslab.workshop7.festival;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,10 +12,11 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class FestivalServiceImpl implements FestivalService {
     private final FestivalRepository festivalRepository;
+    private Clock clock;
 
     @Override
     public List<Festival> getUpcomingFestivalsByCategory(FestivalCategory category) {
-        List<Festival> upcomingFestivals = festivalRepository.findUpcomingFestivals();
+        List<Festival> upcomingFestivals = festivalRepository.findUpcomingFestivals(LocalDate.now(clock));
         return upcomingFestivals
                 .stream()
                 .filter(festival -> festival.getFestivalCategory().equals(category))

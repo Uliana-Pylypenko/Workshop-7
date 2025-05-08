@@ -6,9 +6,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Clock;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -25,13 +29,19 @@ class FestivalServiceTest {
     @Mock
     private FestivalRepository repository;
 
+    @Mock
+    private Clock clock;
+
     private List<Festival> festivalList;
     private Festival festival1;
     private Festival festival2;
     private Festival festival3;
+    private Clock fixedClock;
 
     @BeforeEach
     void setUp() {
+        fixedClock = Clock.fixed(LocalDate.of(2023, 1, 1).atStartOfDay(ZoneOffset.UTC).toInstant(), ZoneId.of("UTC"));
+
         festivalList = new ArrayList<>();
 
         festival1 = new Festival();
@@ -63,7 +73,9 @@ class FestivalServiceTest {
 
     @Test
     void whenGetUpcomingFestivalsByCategory_thenReturnFestivalList() {
-        when(repository.findUpcomingFestivals()).thenReturn(festivalList);
+        Mockito.when(clock.instant()).thenReturn(fixedClock.instant());
+        Mockito.when(clock.getZone()).thenReturn(fixedClock.getZone());
+        when(repository.findUpcomingFestivals(LocalDate.now(clock))).thenReturn(festivalList);
 
         assertThat(service.getUpcomingFestivalsByCategory(FestivalCategory.FILM))
                 .isNotEmpty()
