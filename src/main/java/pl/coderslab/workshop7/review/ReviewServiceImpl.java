@@ -3,6 +3,7 @@ package pl.coderslab.workshop7.review;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.Setter;
+import org.springframework.stereotype.Service;
 import pl.coderslab.workshop7.accommodation.Accommodation;
 import pl.coderslab.workshop7.accommodation.AccommodationRepository;
 import pl.coderslab.workshop7.festival.Festival;
@@ -11,7 +12,7 @@ import pl.coderslab.workshop7.user.User;
 import pl.coderslab.workshop7.user.UserRepository;
 
 
-@Setter
+@Service
 @AllArgsConstructor
 public class ReviewServiceImpl implements ReviewService {
     private ReviewRepository reviewRepository;

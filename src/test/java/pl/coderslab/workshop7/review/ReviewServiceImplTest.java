@@ -63,7 +63,6 @@ class ReviewServiceImplTest {
         comment = "This is a comment";
         festivalReview = new Review(user, festival, rating, comment);
         accommodationReview = new Review(user, accommodation, rating, comment);
-
     }
 
     @Test
