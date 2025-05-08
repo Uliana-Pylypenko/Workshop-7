@@ -52,7 +52,7 @@ class AccommodationServiceTest {
     }
 
     @Test
-    void givenAccommodationList_whenFindByLocation_thenReturnAccommodationList() {
+    void whenFindByLocation_thenReturnAccommodationList() {
         when(repository.findByLocationIgnoreCase("warszawa")).thenReturn(List.of(accommodation1));
 
         assertThat(service.findByLocation("warszawa"))
@@ -62,7 +62,7 @@ class AccommodationServiceTest {
     }
 
     @Test
-    void givenAccommodationList_whenFindByNonExistentLocation_thenReturnEmptyList() {
+    void whenFindByNonExistentLocation_thenReturnEmptyList() {
         when(repository.findByLocationIgnoreCase("Gdansk")).thenReturn(List.of());
 
         assertThat(service.findByLocation("Gdansk"))
@@ -70,7 +70,7 @@ class AccommodationServiceTest {
     }
 
     @Test
-    void givenAccommodationList_whenFindByPricePerDayBetween_thenReturnAccommodationList() {
+    void whenFindByPricePerDayBetween_thenReturnAccommodationList() {
         double priceLow1 = 0.0;
         double priceHigh1 = 20.0;
         when(repository.findByPricePerDayBetween(priceLow1, priceHigh1)).thenReturn(accommodationList);

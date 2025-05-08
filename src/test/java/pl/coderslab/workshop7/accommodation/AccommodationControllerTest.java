@@ -44,7 +44,7 @@ class AccommodationControllerTest {
     }
 
     @Test
-    void getAccommodationsByLocationTest() throws Exception {
+    void whenGetAccommodationsByLocation_thenReturnAccommodation() throws Exception {
         when(service.findByLocation("warszawa")).thenReturn(List.of(accommodation));
 
         mockMvc.perform(get("/accommodation/location/warszawa"))
@@ -55,7 +55,7 @@ class AccommodationControllerTest {
     }
 
     @Test
-    void getAccommodationByPriceRangeTest() throws Exception {
+    void whenGetAccommodationByPriceRange_thenReturnAccommodation() throws Exception {
         when(service.findByPricePerDayBetween(any(Double.class), any(Double.class))).thenReturn(List.of(accommodation));
 
         mockMvc.perform(get("/accommodation/price-range")
@@ -82,7 +82,7 @@ class AccommodationControllerTest {
     }
 
     @Test
-    void getAccommodationByFestivalIdTest() throws Exception {
+    void whenGetAccommodationByFestivalId_thenReturnAccommodation() throws Exception {
         when(service.findByFestivalId(1L)).thenReturn(List.of(accommodation));
 
         mockMvc.perform(get("/accommodation/festival/1"))
@@ -94,16 +94,15 @@ class AccommodationControllerTest {
                 .andExpect(jsonPath("$[0].festival.id").value(1L));
     }
 
-//    @Test
-//    void whenGetAccommodationByFestivalId_thenReturnEmptyList() throws Exception {
-//        when(service.findByFestivalId(2L)).thenThrow(EntityNotFoundException.class);
-//
-//        mockMvc.perform(get("/accommodation/festival/2"))
-//
-//                .andDo(print())
-//                .andExpect(status().isNotFound());
-//               // .andExpect(content().string("[]"));
-//    }
+    @Test
+    void whenGetAccommodationByNonExistentFestivalId_thenReturnEmptyList() throws Exception {
+        when(service.findByFestivalId(2L)).thenThrow(EntityNotFoundException.class);
+
+        mockMvc.perform(get("/accommodation/festival/2"))
+
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
 
     @Test
     void whenGetAccommodationById_thenReturnAccommodation() throws Exception {
@@ -118,7 +117,7 @@ class AccommodationControllerTest {
     }
 
     @Test
-    void whenGetAccommodationById_thenThrowException() throws Exception {
+    void whenGetAccommodationById_thenThrowEntityNotFoundException() throws Exception {
         when(service.findById(3L)).thenThrow(EntityNotFoundException.class);
 
         mockMvc.perform(get("/accommodation/3"))

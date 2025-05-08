@@ -37,13 +37,11 @@ public class ReservationController {
         return new ResponseEntity<>(reservationService.findAllByUserId(userId), HttpStatus.OK);
     }
 
-    // no tests
     @GetMapping("/past/{userId}")
     public ResponseEntity<List<Reservation>> getPastReservations(@PathVariable Long userId) {
         return new ResponseEntity<>(reservationService.findPastReservationsByUserId(userId), HttpStatus.OK);
     }
 
-    // no tests
     @GetMapping("/current/{userId}")
     public ResponseEntity<List<Reservation>> getCurrentReservations(@PathVariable Long userId) {
         return new ResponseEntity<>(reservationService.findCurrentReservationsByUserId(userId), HttpStatus.OK);

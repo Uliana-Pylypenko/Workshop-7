@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -14,7 +15,6 @@ import pl.coderslab.workshop7.user.User;
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -28,34 +28,38 @@ class ReservationControllerTest {
     ReservationService reservationService;
 
     @Autowired
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private ObjectMapper objectMapper;
 
-    private Reservation reservation;
+    private Reservation reservation1;
+    private Reservation reservation2;
 
     @BeforeEach
     void setUp() {
-        reservation = new Reservation();
-        reservation.setId(1L);
+
+        reservation1 = new Reservation();
+        reservation1.setId(1L);
         LocalDate reservationStart = LocalDate.of(2020, 1, 1);
         LocalDate reservationEnd = LocalDate.of(2020, 2, 1);
-        reservation.setReservationStart(reservationStart);
-        reservation.setReservationEnd(reservationEnd);
+        reservation1.setReservationStart(reservationStart);
+        reservation1.setReservationEnd(reservationEnd);
+
+        reservation2 = new Reservation();
+        reservation2.setId(2L);
+        LocalDate reservationStart2 = LocalDate.of(2025, 1, 1);
+        LocalDate reservationEnd2 = LocalDate.of(2025, 2, 1);
+        reservation2.setReservationStart(reservationStart2);
+        reservation2.setReservationEnd(reservationEnd2);
     }
 
     @Test
-    void createReservationTest() throws Exception {
+    void whenCreateReservation_thenReturnReservation() throws Exception {
         Long userId = 1L;
         Long accommodationId = 1L;
         LocalDate reservationStart = LocalDate.of(2020, 1, 1);
         LocalDate reservationEnd = LocalDate.of(2020, 2, 1);
 
-        Reservation reservation = new Reservation();
-        reservation.setId(1L);
-        reservation.setReservationStart(reservationStart);
-        reservation.setReservationEnd(reservationEnd);
-
         when(reservationService.create(userId, accommodationId, reservationStart, reservationEnd))
-                .thenReturn(reservation);
+                .thenReturn(reservation1);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/reservation/create")
                 .param("userId", String.valueOf(userId))
@@ -70,7 +74,7 @@ class ReservationControllerTest {
     }
 
     @Test
-    void createReservationCatchDateTimeParseException() throws Exception {
+    void whenCreateReservation_thenCatchDateTimeParseException() throws Exception {
         Long userId = 1L;
         Long accommodationId = 1L;
         String reservationStart = "20.04.2024";
@@ -87,7 +91,7 @@ class ReservationControllerTest {
     }
 
     @Test
-    void createReservationCatchIllegalArgumentException() throws Exception {
+    void whenCreateReservation_thenCatchIllegalArgumentException() throws Exception {
         Long userId = 1L;
         Long accommodationId = 1L;
         LocalDate reservationStart = LocalDate.of(2025, 1, 1);
@@ -106,7 +110,7 @@ class ReservationControllerTest {
     }
 
     @Test
-    void createReservationCatchEntityNotFoundException() throws Exception {
+    void whenCreateReservation_thenCatchEntityNotFoundException() throws Exception {
         Long userId = 1L;
         Long accommodationId = 1L;
         LocalDate reservationStart = LocalDate.of(2025, 1, 1);
@@ -125,28 +129,79 @@ class ReservationControllerTest {
     }
 
     @Test
-    void findAllByUserIdTest() throws Exception {
+    void whenGetAllByUserId_thenReturnListOfReservations() throws Exception {
         Long userId = 1L;
-        User user = new User(userId, "test", "test@test.com", "test");
-        reservation.setUser(user);
-
-        when(reservationService.findAllByUserId(userId)).thenReturn(List.of(reservation));
+        when(reservationService.findAllByUserId(userId)).thenReturn(List.of(reservation1, reservation2));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/reservation/all/1"))
 
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(reservation.getId().toString()))
-                .andExpect(jsonPath("$[0].user.id").value(user.getId().toString()))
-                .andExpect(jsonPath("$[0].reservationStart").value(reservation.getReservationStart().toString()))
-                .andExpect(jsonPath("$[0].reservationEnd").value(reservation.getReservationEnd().toString()));
+
+                .andExpect(jsonPath("$[0].id").value(reservation1.getId().toString()))
+                .andExpect(jsonPath("$[0].reservationStart").value(reservation1.getReservationStart().toString()))
+                .andExpect(jsonPath("$[0].reservationEnd").value(reservation1.getReservationEnd().toString()))
+
+                .andExpect(jsonPath("$[1].id").value(reservation2.getId().toString()))
+                .andExpect(jsonPath("$[1].reservationStart").value(reservation2.getReservationStart().toString()))
+                .andExpect(jsonPath("$[1].reservationEnd").value(reservation2.getReservationEnd().toString()));
     }
 
     @Test
-    void findAllByUserIdException() throws Exception {
+    void whenGetAllByNonExistentUserId_thenThrowEntityNotFoundException() throws Exception {
         when(reservationService.findAllByUserId(1L)).thenThrow(EntityNotFoundException.class);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/reservation/all/1"))
+
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void whenGetPastReservations_thenReturnPastReservation() throws Exception {
+        Long userId = 1L;
+        when(reservationService.findPastReservationsByUserId(userId)).thenReturn(List.of(reservation1));
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/reservation/past/1"))
+
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(reservation1.getId().toString()))
+                .andExpect(jsonPath("$[0].reservationStart").value(reservation1.getReservationStart().toString()))
+                .andExpect(jsonPath("$[0].reservationEnd").value(reservation1.getReservationEnd().toString()));
+    }
+
+    @Test
+    void whenGetPastReservations_thenCatchEntityNotFoundException() throws Exception {
+        Long userId = 1L;
+        when(reservationService.findPastReservationsByUserId(userId)).thenThrow(EntityNotFoundException.class);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/reservation/past/1"))
+
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void whenGetCurrentReservation_thenReturnCurrentReservation() throws Exception {
+        Long userId = 1L;
+        when(reservationService.findCurrentReservationsByUserId(userId)).thenReturn(List.of(reservation2));
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/reservation/current/1"))
+
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(reservation2.getId().toString()))
+                .andExpect(jsonPath("$[0].reservationStart").value(reservation2.getReservationStart().toString()))
+                .andExpect(jsonPath("$[0].reservationEnd").value(reservation2.getReservationEnd().toString()));
+    }
+
+    @Test
+    void whenGetCurrentReservation_thenCatchEntityNotFoundException() throws Exception {
+        Long userId = 1L;
+        when(reservationService.findCurrentReservationsByUserId(userId)).thenThrow(EntityNotFoundException.class);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/reservation/current/1"))
 
                 .andDo(print())
                 .andExpect(status().isNotFound());

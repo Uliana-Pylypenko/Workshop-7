@@ -42,7 +42,7 @@ class AccommodationRepositoryTest {
     }
 
     @Test
-    void findByLocationIgnoreCaseTest() {
+    void whenFindByLocationIgnoreCase_thenReturnListOfAccommodation1() {
         List<Accommodation> accommodationsInWarsaw = repository.findByLocationIgnoreCase("warszawa");
 
         assertThat(accommodationsInWarsaw)
@@ -52,7 +52,7 @@ class AccommodationRepositoryTest {
     }
 
     @Test
-    void findByPricePerDayBetweenTest() {
+    void whenFindByPricePerDayBetween_thenReturnListOfAccommodations() {
         List<Accommodation> priceBetween5and10 = repository.findByPricePerDayBetween(5.0, 10.0);
 
         assertThat(priceBetween5and10)
@@ -69,7 +69,7 @@ class AccommodationRepositoryTest {
     }
 
     @Test
-    void findByFestivalId() {
+    void whenFindByFestivalId_thenReturnListOfAccommodation1() {
         Long festivalId = accommodation1.getFestival().getId();
         assertThat(repository.findByFestivalId(festivalId))
                 .isNotEmpty()
