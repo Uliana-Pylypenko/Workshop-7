@@ -1,6 +1,5 @@
 package pl.coderslab.workshop7.reservation;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +15,6 @@ import java.util.List;
 public class ReservationController {
     private final ReservationService reservationService;
 
-    // automatize EntityNotFoundException handling
-
     @PostMapping("/create")
     public ResponseEntity<Reservation> createReservation(@RequestParam Long userId,
                                                          @RequestParam Long accommodationId,
@@ -30,11 +27,8 @@ public class ReservationController {
             Reservation savedReservation = reservationService.create(userId, accommodationId, reservationStart, reservationEnd);
             return new ResponseEntity<>(savedReservation, HttpStatus.CREATED);
 
-        } catch (DateTimeParseException | IllegalArgumentException e) {
+        } catch (DateTimeParseException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-        } catch (EntityNotFoundException e1) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 

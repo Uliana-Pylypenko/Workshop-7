@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
@@ -32,11 +31,7 @@ public class AccommodationController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Accommodation> getAccommodationById(@PathVariable Long id) {
-        try {
-            Accommodation accommodation = service.findById(id);
-            return new ResponseEntity<>(accommodation, HttpStatus.OK);
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        Accommodation accommodation = service.findById(id);
+        return new ResponseEntity<>(accommodation, HttpStatus.OK);
     }
 }

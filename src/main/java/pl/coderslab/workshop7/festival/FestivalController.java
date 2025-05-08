@@ -16,13 +16,9 @@ public class FestivalController {
 
     @GetMapping("/category/{categoryId}")
     public ResponseEntity<List<Festival>> getUpcomingFestivalsByCategory(@PathVariable int categoryId) {
-        try {
-            FestivalCategory category = FestivalCategory.getById(categoryId);
-            return ResponseEntity.ok(festivalService.getUpcomingFestivalsByCategory(category));
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
 
+        FestivalCategory category = FestivalCategory.getById(categoryId);
+        return ResponseEntity.ok(festivalService.getUpcomingFestivalsByCategory(category));
     }
 
     @GetMapping("/name/{name}")
@@ -37,12 +33,8 @@ public class FestivalController {
 
     @GetMapping("/start-date")
     public ResponseEntity<List<Festival>> getFestivalByStartDate(@RequestParam String startDate, @RequestParam String endDate) {
-        try {
-            List<Festival> festivals = festivalService.findAllByStartDateBetween(LocalDate.parse(startDate), LocalDate.parse(endDate));
-            return ResponseEntity.ok(festivals);
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+        List<Festival> festivals = festivalService.findAllByStartDateBetween(LocalDate.parse(startDate), LocalDate.parse(endDate));
+        return ResponseEntity.ok(festivals);
     }
 
     @GetMapping("/details/{id}")
@@ -52,11 +44,8 @@ public class FestivalController {
 
     @GetMapping("/price-range")
     public ResponseEntity<List<Festival>> getFestivalByPriceRange(@RequestParam Double lower, @RequestParam Double higher) {
-        try {
-            List<Festival> festivals = festivalService.findAllByPricePerDayBetween(lower, higher);
-            return ResponseEntity.ok(festivals);
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+
+        List<Festival> festivals = festivalService.findAllByPricePerDayBetween(lower, higher);
+        return ResponseEntity.ok(festivals);
     }
 }
