@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pl.coderslab.workshop7.accommodation.Accommodation;
 import pl.coderslab.workshop7.accommodation.AccommodationRepository;
@@ -51,13 +52,14 @@ class ReservationServiceTest {
     private Reservation reservation2;
     private LocalDate reservationStart;
     private LocalDate reservationEnd;
+    private Clock fixedClock;
 
 
     @BeforeEach
     void setUp() {
-        Clock fixedClock = Clock.fixed(LocalDate.of(2023, 1, 1).atStartOfDay(ZoneOffset.UTC).toInstant(), ZoneId.of("UTC"));
+        fixedClock = Clock.fixed(LocalDate.of(2023, 1, 1).atStartOfDay(ZoneOffset.UTC).toInstant(), ZoneId.of("UTC"));
         LocalDate fixedDate = LocalDate.now(fixedClock);
-        
+
         userId = 1L;
         user = new User(userId, "test", "test@gmail.com", "test");
 
@@ -166,6 +168,8 @@ class ReservationServiceTest {
     @Test
     void whenFindPastReservationsByUserId_thenReturnPastReservations() {
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        Mockito.when(clock.instant()).thenReturn(fixedClock.instant());
+        Mockito.when(clock.getZone()).thenReturn(fixedClock.getZone());
         when(reservationRepository.findPastReservationsByUserId(userId, LocalDate.now(clock))).thenReturn(List.of(reservation1));
 
         List<Reservation> pastReservations = service.findPastReservationsByUserId(userId);
@@ -190,6 +194,8 @@ class ReservationServiceTest {
     @Test
     void whenFindCurrentReservationsByUserId_thenReturnListOfReservations() {
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        Mockito.when(clock.instant()).thenReturn(fixedClock.instant());
+        Mockito.when(clock.getZone()).thenReturn(fixedClock.getZone());
         when(reservationRepository.findCurrentReservationsByUserId(userId, LocalDate.now(clock))).thenReturn(List.of(reservation2));
 
         List<Reservation> currentReservations = service.findCurrentReservationsByUserId(userId);
