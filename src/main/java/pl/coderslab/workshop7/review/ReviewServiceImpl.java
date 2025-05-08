@@ -11,6 +11,8 @@ import pl.coderslab.workshop7.festival.FestivalRepository;
 import pl.coderslab.workshop7.user.User;
 import pl.coderslab.workshop7.user.UserRepository;
 
+import java.util.List;
+
 
 @Service
 @AllArgsConstructor
@@ -50,5 +52,14 @@ public class ReviewServiceImpl implements ReviewService {
 
     private enum ReviewType {
         FESTIVAL, ACCOMMODATION
+    }
+
+    @Override
+    public List<Review> findAllByFestivalId(Long festivalId) {
+        if (festivalRepository.findById(festivalId).isPresent()) {
+            return reviewRepository.findAllByFestivalId(festivalId);
+        } else {
+            throw new EntityNotFoundException("Festival not found");
+        }
     }
 }

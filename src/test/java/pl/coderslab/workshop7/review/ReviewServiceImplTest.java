@@ -14,6 +14,7 @@ import pl.coderslab.workshop7.festival.FestivalRepository;
 import pl.coderslab.workshop7.user.User;
 import pl.coderslab.workshop7.user.UserRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -134,6 +135,26 @@ class ReviewServiceImplTest {
                         service.addAccommodationReview(user.getId(), accommodation.getId(), rating, comment));
 
         assertThat(entityNotFoundException.getMessage()).isEqualTo("Accommodation not found");
+    }
+
+    @Test
+    void whenFindAllByFestivalId_thenReturnReviewList() {
+        when(festivalRepository.findById(festival.getId())).thenReturn(Optional.of(festival));
+        when(reviewRepository.findAllByFestivalId(festival.getId())).thenReturn(List.of(festivalReview));
+
+        List<Review> reviews = service.findAllByFestivalId(festival.getId());
+
+        assertThat(reviews)
+                .isNotEmpty()
+                .containsExactly(festivalReview);
+    }
+
+    @Test
+    void givenNonExistingFestival_whenFindAllByFestivalId_thenThrowEntityNotFoundException() {
+        when(festivalRepository.findById(festival.getId())).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () ->
+                service.findAllByFestivalId(festival.getId()));
     }
 
 }
