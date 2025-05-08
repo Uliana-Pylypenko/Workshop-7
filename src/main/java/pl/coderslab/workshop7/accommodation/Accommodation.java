@@ -33,9 +33,6 @@ public class Accommodation {
     private String location;
     private String imageUrl;
 
-    @OneToMany(mappedBy = "accommodation")
-    private List<Review> reviews = new ArrayList<>();
-
     @ElementCollection(targetClass = Amenity.class)
     @CollectionTable(name = "accommodation_amenities", joinColumns = @JoinColumn(name = "accommodation_id"))
     @Enumerated(EnumType.STRING)

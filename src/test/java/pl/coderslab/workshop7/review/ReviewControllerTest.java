@@ -12,8 +12,11 @@ import pl.coderslab.workshop7.accommodation.Accommodation;
 import pl.coderslab.workshop7.festival.Festival;
 import pl.coderslab.workshop7.user.User;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -122,5 +125,30 @@ class ReviewControllerTest {
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    void whenGetReviewByFestivalId_thenReturnReview() throws Exception {
+        when(reviewService.findAllByFestivalId(festival.getId())).thenReturn(List.of(festivalReview));
+
+        mockMvc.perform(get("/review/festival/{festivalId}", festival.getId()))
+
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].festival.id").value(festival.getId()))
+                .andExpect(jsonPath("$[0].rating").value(rating))
+                .andExpect(jsonPath("$[0].comment").value(comment));
+    }
+
+    @Test
+    void givenNonExistentFestivalId_whenGetReviewByFestivalId_thenThrowEntityNotFoundException() throws Exception {
+        when(reviewService.findAllByFestivalId(festival.getId())).thenThrow(EntityNotFoundException.class);
+
+        mockMvc.perform(get("/review/festival/{festivalId}", festival.getId()))
+
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    
 
 }
