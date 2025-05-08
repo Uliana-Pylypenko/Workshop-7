@@ -39,4 +39,10 @@ public class ReviewController {
         return new ResponseEntity<>(reviews, HttpStatus.OK);
     }
 
+    @GetMapping("/accommodation/{accommodationId}")
+    public ResponseEntity<List<Review>> getReviewByAccommodationId(@PathVariable Long accommodationId) {
+        List<Review> reviews = reviewService.findAllByAccommodationId(accommodationId);
+        return new ResponseEntity<>(reviews, HttpStatus.OK);
+    }
+
 }

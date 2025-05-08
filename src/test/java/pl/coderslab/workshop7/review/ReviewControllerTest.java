@@ -149,6 +149,27 @@ class ReviewControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    @Test
+    void whenGetReviewByAccommodationId_thenReturnReview() throws Exception {
+        when(reviewService.findAllByAccommodationId(accommodation.getId())).thenReturn(List.of(accommodationReview));
 
+        mockMvc.perform(get("/review/accommodation/{accommodationId}", accommodation.getId()))
+
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].accommodation.id").value(accommodation.getId()))
+                .andExpect(jsonPath("$[0].rating").value(rating))
+                .andExpect(jsonPath("$[0].comment").value(comment));
+    }
+
+    @Test
+    void givenNonExistentAccommodationId_whenGetReviewByFestivalId_thenThrowEntityNotFoundException() throws Exception {
+        when(reviewService.findAllByAccommodationId(accommodation.getId())).thenThrow(EntityNotFoundException.class);
+
+        mockMvc.perform(get("/review/accommodation/{accommodationId}", accommodation.getId()))
+
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
 
 }
