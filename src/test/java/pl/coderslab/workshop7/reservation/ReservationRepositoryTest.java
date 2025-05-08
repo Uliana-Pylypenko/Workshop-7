@@ -2,14 +2,19 @@ package pl.coderslab.workshop7.reservation;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import pl.coderslab.workshop7.accommodation.Accommodation;
 import pl.coderslab.workshop7.user.User;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.time.Clock;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,6 +27,9 @@ class ReservationRepositoryTest {
     @Autowired
     private ReservationRepository repository;
 
+    @MockitoBean
+    private Clock clock;
+
     private User user;
     private Accommodation accommodation;
     private Reservation reservation1;
@@ -29,6 +37,10 @@ class ReservationRepositoryTest {
 
     @BeforeEach
     void setUp() {
+        Clock fixedClock = Clock.fixed(LocalDate.of(2027, 1, 1).atStartOfDay(ZoneOffset.UTC).toInstant(), ZoneId.of("UTC"));
+        Mockito.when(clock.instant()).thenReturn(fixedClock.instant());
+        Mockito.when(clock.getZone()).thenReturn(fixedClock.getZone());
+
         user = new User("test", "test@gmail.com", "test");
         entityManager.persist(user);
 
@@ -67,7 +79,8 @@ class ReservationRepositoryTest {
 
     @Test
     void findPastReservationsByUserIdTest() {
-        List<Reservation> foundReservation = repository.findPastReservationsByUserId(user.getId());
+
+        List<Reservation> foundReservation = repository.findPastReservationsByUserId(user.getId(), LocalDate.now(clock));
 
         assertThat(foundReservation)
                 .isNotEmpty()

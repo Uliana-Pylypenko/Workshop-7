@@ -8,6 +8,7 @@ import pl.coderslab.workshop7.accommodation.Accommodation;
 import pl.coderslab.workshop7.user.User;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "reservations")
@@ -26,6 +27,8 @@ public class Reservation {
 
     @ManyToOne
     private Accommodation accommodation;
+
+    private LocalDateTime dateOfReservation;
 
     private LocalDate reservationStart;
     private LocalDate reservationEnd;

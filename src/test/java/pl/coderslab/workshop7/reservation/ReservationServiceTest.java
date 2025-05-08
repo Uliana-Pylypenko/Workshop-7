@@ -55,6 +55,9 @@ class ReservationServiceTest {
 
     @BeforeEach
     void setUp() {
+        Clock fixedClock = Clock.fixed(LocalDate.of(2023, 1, 1).atStartOfDay(ZoneOffset.UTC).toInstant(), ZoneId.of("UTC"));
+        LocalDate fixedDate = LocalDate.now(fixedClock);
+
         userId = 1L;
         user = new User(userId, "test", "test@gmail.com", "test");
 
@@ -73,16 +76,17 @@ class ReservationServiceTest {
         reservation1.setReservationEnd(reservationEnd);
         reservation1.setReservationStatus(ReservationStatus.IN_PROGRESS);
 
+
         reservation2 = new Reservation();
         reservation2.setId(2L);
         reservation2.setUser(user);
         reservation2.setAccommodation(accommodation);
-        Clock fixedClock = Clock.fixed(LocalDate.of(2023, 1, 1).atStartOfDay(ZoneOffset.UTC).toInstant(), ZoneId.of("UTC"));
-        LocalDate fixedDate = LocalDate.now(fixedClock);
         reservation2.setReservationStart(fixedDate.minusDays(1));
         reservation2.setReservationEnd(fixedDate.plusDays(1));
         reservation2.setReservationEnd(reservationEnd);
         reservation2.setReservationStatus(ReservationStatus.IN_PROGRESS);
+
+
     }
 
     @Test
@@ -165,7 +169,7 @@ class ReservationServiceTest {
     @Test
     void whenFindPastReservationsByUserId_thenReturnPastReservations() {
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-        when(reservationRepository.findPastReservationsByUserId(userId)).thenReturn(List.of(reservation1));
+        when(reservationRepository.findPastReservationsByUserId(userId, LocalDate.now(clock))).thenReturn(List.of(reservation1));
 
         List<Reservation> pastReservations = service.findPastReservationsByUserId(userId);
 
@@ -229,6 +233,24 @@ class ReservationServiceTest {
 
         assertThrows(EntityNotFoundException.class, () -> service.updateReservationStatus(1L, ReservationStatus.CONFIRMED));
 
+        verify(reservationRepository, never()).save(any(Reservation.class));
+    }
+
+    @Test
+    void whenCancelReservation_thenReturnReservationWithCancelledStatus() {
+        when(reservationRepository.findById(1L)).thenReturn(Optional.of(reservation1));
+
+        Reservation cancelledReservation = service.cancelReservation(1L);
+
+        assertThat(cancelledReservation.getReservationStatus()).isEqualTo(ReservationStatus.CANCELLED);
+        verify(reservationRepository, times(1)).save(reservation1);
+    }
+
+    @Test
+    void whenCancelNonExistentReservation_thenThrowEntityNotFoundException() {
+        when(reservationRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> service.cancelReservation(1L));
         verify(reservationRepository, never()).save(any(Reservation.class));
     }
 

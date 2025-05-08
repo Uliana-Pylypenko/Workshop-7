@@ -17,6 +17,7 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -215,7 +216,7 @@ class ReservationControllerTest {
         reservation1.setReservationStatus(newStatus);
         when(reservationService.updateReservationStatus(id, newStatus)).thenReturn(reservation1);
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/reservation/update-status")
+        mockMvc.perform(put("/reservation/update-status")
                 .param("id", String.valueOf(id))
                 .param("status", newStatus.toString()))
 
@@ -229,10 +230,9 @@ class ReservationControllerTest {
     void whenUpdateNonExistingReservationStatus_thenCatchEntityNotFoundException() throws Exception {
         Long id = 1L;
         ReservationStatus newStatus = ReservationStatus.CONFIRMED;
-        reservation1.setReservationStatus(newStatus);
         when(reservationService.updateReservationStatus(id, newStatus)).thenThrow(EntityNotFoundException.class);
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/reservation/update-status")
+        mockMvc.perform(put("/reservation/update-status")
                         .param("id", String.valueOf(id))
                         .param("status", newStatus.toString()))
 
@@ -240,6 +240,33 @@ class ReservationControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    @Test
+    void whenCancelReservation_thenReturnReservationWithCancelledStatus() throws Exception {
+        Long id = 1L;
+        ReservationStatus newStatus = ReservationStatus.CANCELLED;
+        reservation1.setReservationStatus(newStatus);
+        when(reservationService.cancelReservation(id)).thenReturn(reservation1);
+
+        mockMvc.perform(put("/reservation/cancel")
+                .param("id", String.valueOf(id)))
+
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(String.valueOf(id)))
+                .andExpect(jsonPath("$.reservationStatus").value(newStatus.toString()));
+    }
+
+    @Test
+    void whenCancelNonExistentReservation_thenCatchEntityNotFoundException() throws Exception {
+        Long id = 1L;
+        when(reservationService.cancelReservation(id)).thenThrow(EntityNotFoundException.class);
+
+        mockMvc.perform(put("/reservation/cancel")
+                .param("id", String.valueOf(id)))
+
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
 
 
 }
