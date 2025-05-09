@@ -12,4 +12,6 @@ public interface AccommodationService {
     Accommodation findById(Long id);
 
     Accommodation save(Accommodation accommodation);
+
+    Accommodation findOneByName(String name);
 }

@@ -41,4 +41,9 @@ public class AccommodationServiceImpl implements AccommodationService {
     public Accommodation save(Accommodation accommodation) {
         return repository.save(accommodation);
     }
+
+    @Override
+    public Accommodation findOneByName(String name) {
+        return repository.findOneByName(name).orElse(null);
+    }
 }

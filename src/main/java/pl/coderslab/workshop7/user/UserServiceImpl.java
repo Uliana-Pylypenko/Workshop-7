@@ -1,5 +1,6 @@
 package pl.coderslab.workshop7.user;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,16 @@ public class UserServiceImpl implements UserService {
             return userOptional.get();
         } else {
             throw new IllegalArgumentException("Invalid username/email or password");
+        }
+    }
+
+    @Override
+    public User findById(Long id) {
+        Optional<User> userOptional = userRepository.findById(id);
+        if (userOptional.isPresent()) {
+            return userOptional.get();
+        } else {
+            throw new EntityNotFoundException("User with id " + id + " not found");
         }
     }
 }

@@ -9,11 +9,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import pl.coderslab.workshop7.user.Helpers.*;
 
 import java.util.Random;
 
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
+import static pl.coderslab.workshop7.user.Helpers.generateCredentials;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @ExtendWith(SpringExtension.class)
@@ -30,30 +32,6 @@ class UserControllerRestAssuredTest {
     }
 
 
-    private static final String CHARACTERS = "abcdefghijklmnopqrstuvwxyz";
-    private static final String DOMAIN = "@example.com";
-    private static final Random RANDOM = new Random();
-
-    private enum CredentialType {
-        USERNAME, EMAIL
-    }
-
-    public static String generateCredentials(int length, CredentialType type) {
-        StringBuilder email = new StringBuilder(length);
-
-        for (int i = 0; i < length; i++) {
-            int index = RANDOM.nextInt(CHARACTERS.length());
-            email.append(CHARACTERS.charAt(index));
-        }
-
-        if (type == CredentialType.USERNAME) {
-            return email.toString();
-        } else {
-            email.append(DOMAIN);
-            return email.toString();
-        }
-
-    }
 
     @Test
     void whenRegisterUser_thenReturnUser() throws Exception {
