@@ -20,7 +20,7 @@ public class ReviewController {
                                                     @RequestParam String comment) {
 
         Review review = reviewService.addFestivalReview(userId, festivalId, rating, comment);
-        return ResponseEntity.ok(review);
+        return new ResponseEntity<>(review, HttpStatus.CREATED);
     }
 
     @PostMapping("/add/accommodation")
@@ -30,7 +30,7 @@ public class ReviewController {
                                                     @RequestParam String comment) {
 
         Review review = reviewService.addAccommodationReview(userId, accommodationId, rating, comment);
-        return ResponseEntity.ok(review);
+        return new ResponseEntity<>(review, HttpStatus.CREATED);
     }
 
     @GetMapping("/festival/{festivalId}")

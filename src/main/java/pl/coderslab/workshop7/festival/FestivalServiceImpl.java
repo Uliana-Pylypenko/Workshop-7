@@ -1,11 +1,13 @@
 package pl.coderslab.workshop7.festival;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -59,5 +61,15 @@ public class FestivalServiceImpl implements FestivalService {
     @Override
     public Festival save(Festival festival) {
         return festivalRepository.save(festival);
+    }
+
+    @Override
+    public Festival findOneByName(String name) {
+        Optional<Festival> festivalOptional = festivalRepository.findOneByName(name);
+        if (festivalOptional.isPresent()) {
+            return festivalOptional.get();
+        } else {
+            throw new EntityNotFoundException("Festival with name " + name + " not found");
+        }
     }
 }

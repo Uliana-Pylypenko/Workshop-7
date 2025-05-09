@@ -17,4 +17,6 @@ public interface FestivalService {
     Festival getFestivalById(Long id);
 
     Festival save(Festival festival);
+
+    Festival findOneByName(String name);
 }
