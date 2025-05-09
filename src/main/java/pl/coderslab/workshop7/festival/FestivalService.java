@@ -15,4 +15,6 @@ public interface FestivalService {
     List<Festival> findAllByPricePerDayBetween(double lower, double higher);
 
     Festival getFestivalById(Long id);
+
+    Festival save(Festival festival);
 }

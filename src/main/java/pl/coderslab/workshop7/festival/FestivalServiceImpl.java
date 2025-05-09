@@ -55,4 +55,9 @@ public class FestivalServiceImpl implements FestivalService {
     public Festival getFestivalById(Long id) {
         return festivalRepository.findById(id).orElse(null);
     }
+
+    @Override
+    public Festival save(Festival festival) {
+        return festivalRepository.save(festival);
+    }
 }

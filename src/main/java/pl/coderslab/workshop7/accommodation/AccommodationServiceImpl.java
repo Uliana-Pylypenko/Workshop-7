@@ -36,4 +36,9 @@ public class AccommodationServiceImpl implements AccommodationService {
             throw new EntityNotFoundException("Accommodation with id " + id + " not found");
         }
     }
+
+    @Override
+    public Accommodation save(Accommodation accommodation) {
+        return repository.save(accommodation);
+    }
 }

@@ -10,4 +10,6 @@ public interface AccommodationService {
     List<Accommodation> findByFestivalId(Long id);
 
     Accommodation findById(Long id);
+
+    Accommodation save(Accommodation accommodation);
 }
