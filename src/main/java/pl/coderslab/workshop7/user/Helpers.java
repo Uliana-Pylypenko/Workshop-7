@@ -1,29 +1,22 @@
 package pl.coderslab.workshop7.user;
 
-import java.util.Random;
+import org.apache.commons.lang3.RandomStringUtils;
+
 
 public class Helpers {
-    private static final String CHARACTERS = "abcdefghijklmnopqrstuvwxyz";
     private static final String DOMAIN = "@example.com";
-    private static final Random RANDOM = new Random();
 
     public enum CredentialType {
         USERNAME, EMAIL
     }
 
     public static String generateCredentials(int length, CredentialType type) {
-        StringBuilder email = new StringBuilder(length);
-
-        for (int i = 0; i < length; i++) {
-            int index = RANDOM.nextInt(CHARACTERS.length());
-            email.append(CHARACTERS.charAt(index));
-        }
+        String randomString = RandomStringUtils.randomAlphanumeric(length);
 
         if (type == CredentialType.USERNAME) {
-            return email.toString();
+            return randomString;
         } else {
-            email.append(DOMAIN);
-            return email.toString();
+            return randomString + DOMAIN;
         }
 
     }

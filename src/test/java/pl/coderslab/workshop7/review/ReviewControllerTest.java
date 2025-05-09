@@ -70,7 +70,7 @@ class ReviewControllerTest {
                 .param("comment", comment))
 
                 .andDo(print())
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.user.id").value(user.getId()))
                 .andExpect(jsonPath("$.festival.id").value(festival.getId()))
                 .andExpect(jsonPath("$.rating").value(rating))
@@ -104,7 +104,7 @@ class ReviewControllerTest {
                         .param("comment", comment))
 
                 .andDo(print())
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.user.id").value(user.getId()))
                 .andExpect(jsonPath("$.accommodation.id").value(accommodation.getId()))
                 .andExpect(jsonPath("$.rating").value(rating))

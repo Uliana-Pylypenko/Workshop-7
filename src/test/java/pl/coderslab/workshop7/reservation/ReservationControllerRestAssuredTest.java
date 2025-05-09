@@ -3,6 +3,7 @@ package pl.coderslab.workshop7.reservation;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -47,7 +48,7 @@ class ReservationControllerRestAssuredTest {
         User user = userService.loginUser(username, "password");
 
         Accommodation accommodationToSave = new Accommodation();
-        String accommodationName = "Accommodation for reservation test";
+        String accommodationName = "Accommodation for reservation test " + RandomStringUtils.randomAlphabetic(5);
         accommodationToSave.setName(accommodationName);
         accommodationService.save(accommodationToSave);
         Accommodation accommodation = accommodationService.findOneByName(accommodationName);
